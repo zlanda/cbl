@@ -7,7 +7,7 @@
 *   修改历史：无
 *******************************************************************************/
 
-#include <List.h>
+#include "List.h"
 
 /*******************************************************************************
 *   函 数   名：ListHeadInit
@@ -35,12 +35,12 @@ BOOL ListHeadInit(LIST_HEAD_S *pstListHead)
 }
 
 /*******************************************************************************
-*   函 数   名：ListHeadInit
+*   函 数   名：ListIsEmpty
 *   功     能：链表是否为空
 *   输入参数：pstListHead:待初始化的链表头
 *   输出参数：无
-*   返 回 值：CBL_FALSE:失败
-*             CBL_TRUE:成功
+*   返 回 值：CBL_FALSE:链表不为空
+*             CBL_TRUE:链表为空
 *   作     者：zhanxc
 *   创建日期：018-7-02
 *   修改历史：无
@@ -50,7 +50,7 @@ BOOL ListIsEmpty(LIST_HEAD_S *pstListHead)
     /* 参数校验 */
     if (CBL_NULL == pstListHead)
     {
-        return CBL_FALSE;
+        return CBL_TRUE;
     }
 
     if (pstListHead->pstNext == pstListHead)

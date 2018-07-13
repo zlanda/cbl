@@ -17,6 +17,7 @@ extern "C" {
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #ifndef INT8
 typedef signed char                 INT8;

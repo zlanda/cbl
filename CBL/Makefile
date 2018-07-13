@@ -48,11 +48,19 @@ $(MKDIR):
 ################################################################################
 #链接Base库
 $(BASE_LIB):	$(BASE_LIB)_objs
-	$(CC) $(CFLAGS) -fPIC -shared -o $(BASE_BUILD_PATH)/$(BASE_LIB) $(BASE_BUILD_PATH)/List.o
+	$(CC) $(CFLAGS) -fPIC -shared -o $(BASE_BUILD_PATH)/$(BASE_LIB) $(BASE_BUILD_PATH)/List.o \
+		$(BASE_BUILD_PATH)/Queue.o \
+		$(BASE_BUILD_PATH)/Stack.o \
+		$(BASE_BUILD_PATH)/HashTable.o \
+		$(BASE_BUILD_PATH)/Btree.o
 
 #编译Base
 $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/List.c -o $(BASE_BUILD_PATH)/List.o
+	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Queue.c -o $(BASE_BUILD_PATH)/Queue.o
+	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Stack.c -o $(BASE_BUILD_PATH)/Stack.o
+	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/HashTable.c -o $(BASE_BUILD_PATH)/HashTable.o
+	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Btree.c -o $(BASE_BUILD_PATH)/Btree.o
 
 ################################################################################
 #链接Test
