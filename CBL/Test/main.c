@@ -5,12 +5,14 @@
 #include "Stack.h"
 #include "HashTable.h"
 #include "Btree.h"
+#include "Tree.h"
 
 #define LIST_TEST                               0
 #define QUEUE_TEST                              0
 #define STACK_TEST                              0
 #define HASHTABLE_TEST                          0
-#define BTREE_TESE                              1
+#define BTREE_TESE                              0
+#define TREE_TESE                               1
 
 #if LIST_TEST
 typedef struct LIST_NODE_Tag
@@ -64,7 +66,10 @@ HASHTABLE_HEAD_S g_stHashTable[HASHTABLE_SIZE];
 
 #if BTREE_TESE
 BTREE_S g_stBTree;
+#endif
 
+#if TREE_TESE
+TREE_S g_stTree;
 #endif
 
 int main()
@@ -583,6 +588,249 @@ int main()
         printf("Release Fail!\r\n");
     }
 
+#endif
+
+#if TREE_TESE
+	TREE_MSG_S stMsg;
+	UINT32 uiMsgValue = 0;
+	TREE_NODE_S *pstTreeNode1 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode2 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode3 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode4 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode5 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode6 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode7 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode8 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode9 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode10 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode11 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode12 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode13 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode14 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode15 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode16 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode17 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode18 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode19 = CBL_NULL;
+	TREE_NODE_S *pstTreeNode20 = CBL_NULL;
+	TREE_NODE_S *pstTreeFoundNode = CBL_NULL;
+
+	stMsg.pvMsg = (UINT32 *)malloc(sizeof(UINT32));
+	stMsg.uiMsgLen = sizeof(UINT32);
+
+	/* 根节点消息 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+
+	/* 创建根节点 */
+	TreeCreate(&g_stTree, &stMsg);
+
+	/* 创建子节点1 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 1;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode1 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, g_stTree.pstRoot, pstTreeNode1);
+
+	/* 插入节点2 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 2;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode2 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, g_stTree.pstRoot, pstTreeNode2);
+
+	/* 插入节点3 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 3;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode3 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, g_stTree.pstRoot, pstTreeNode3);
+
+	/* 插入节点4 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 4;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode4 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode1, pstTreeNode4);
+
+	/* 插入节点5 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 5;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode5 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode1, pstTreeNode5);
+
+	/* 插入节点6 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 6;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode6 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode1, pstTreeNode6);
+
+	/* 插入节点7 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 7;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode7 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode2, pstTreeNode7);
+
+	/* 插入节点8 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 8;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode8 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode2, pstTreeNode8);
+
+	/* 插入节点9 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 9;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode9 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode2, pstTreeNode9);
+
+	/* 插入节点10 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 10;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode10 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode3, pstTreeNode10);
+
+	/* 插入节点11 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 11;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode11 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode3, pstTreeNode11);
+
+	/* 插入节点12 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 12;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode12 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode4, pstTreeNode12);
+
+	/* 插入节点13 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 13;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode13 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode4, pstTreeNode13);
+
+	/* 插入节点14 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 14;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode14 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode4, pstTreeNode14);
+
+	/* 插入节点15 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 15;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode15 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode5, pstTreeNode15);
+
+	/* 插入节点16 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 16;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode16 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode5, pstTreeNode16);
+
+	/* 插入节点17 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 17;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode17 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode10, pstTreeNode17);
+
+	/* 插入节点18 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 18;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode18 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode10, pstTreeNode18);
+
+	/* 插入节点19 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 19;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode19 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode10, pstTreeNode19);
+
+	/* 插入节点20 */
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 20;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+	pstTreeNode20 = TreeMakeNodeWithValue(&stMsg);
+
+	/* 插入节点 */
+	TreeNodeInsert(&g_stTree, pstTreeNode10, pstTreeNode20);
+
+	printf("Tree:\r\n");
+	/* 遍历树 */
+	TreeTraversal(&g_stTree);
+
+	printf("Found Tree Node 2\r\n");
+	memset(stMsg.pvMsg, 0, stMsg.uiMsgLen);
+	uiMsgValue = 2;
+	memcpy(stMsg.pvMsg, &uiMsgValue, stMsg.uiMsgLen);
+
+	/* 查找结点 */
+	TreeNodeLookup(&g_stTree, &pstTreeFoundNode, &stMsg);
+	/* 打印查找到的节点值 */
+	uiMsgValue = 100;
+	if (CBL_NULL != pstTreeFoundNode)
+	{
+		memcpy(&uiMsgValue, pstTreeFoundNode->pstPayloadMsg->pvMsg, pstTreeFoundNode->pstPayloadMsg->uiMsgLen);
+		printf("Found Node Value: %d\r\n", uiMsgValue);
+	}
+
+	printf("Destroy:\r\n");
+	/* 销毁树 */
+	TreeDestroy(&g_stTree);
+
+	printf("Tree:\r\n");
+	/* 遍历树 */
+	TreeTraversal(&g_stTree);
 #endif
 
     return 0;
