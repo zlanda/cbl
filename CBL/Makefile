@@ -27,13 +27,25 @@ BASE_INC := $(ROOT)/$(BASE)/include
 BASE_BUILD_PATH := $(BUILD_PATH)/$(BASE)
 BASE_LIB_PATH := $(BUILD_PATH)/$(BASE)
 
+#定义编译RPC目录变量
+RPC := RPC
+RPC_SRC := $(ROOT)/$(RPC)/src
+RPC_INC := $(ROOT)/$(RPC)/include
+RPC_BUILD_PATH := $(BUILD_PATH)/$(RPC)
+
+#定义编译Common目录变量
+COMMON := Common
+COMMON_SRC := $(ROOT)/$(COMMON)/src
+COMMON_INC := $(ROOT)/$(COMMON)/include
+COMMON_BUILD_PATH := $(BUILD_PATH)/$(COMMON)
+
 #定义Test目录
 TEST := Test
 TEST_SRC := $(ROOT)/$(TEST)
 TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 
 #编译参数
-CFLAGS := -Wall -O2 -g -I $(BASE_INC)
+CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST)
@@ -43,6 +55,8 @@ all: $(MKDIR) $(BASE_LIB) $(TEST)
 $(MKDIR):
 	mkdir -p $(ROOT)/$(BUILD_PATH)		\
 	$(ROOT)/$(BASE_BUILD_PATH)		\
+	$(ROOT)/$(RPC_BUILD_PATH)		\
+	$(ROOT)/$(COMMON_BUILD_PATH)		\
 	$(ROOT)/$(TEST_BUILD_PATH)
 
 ################################################################################
@@ -53,7 +67,11 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(BASE_BUILD_PATH)/Stack.o \
 		$(BASE_BUILD_PATH)/HashTable.o \
 		$(BASE_BUILD_PATH)/Btree.o \
-		$(BASE_BUILD_PATH)/Tree.o
+		$(BASE_BUILD_PATH)/Tree.o \
+		$(COMMON_BUILD_PATH)/Process.o \
+		$(COMMON_BUILD_PATH)/Thread.o \
+		$(COMMON_BUILD_PATH)/Lock.o \
+		$(RPC_BUILD_PATH)/Fifo.o
 
 #编译Base
 $(BASE_LIB)_objs:
@@ -63,6 +81,10 @@ $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/HashTable.c -o $(BASE_BUILD_PATH)/HashTable.o
 	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Btree.c -o $(BASE_BUILD_PATH)/Btree.o
 	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Tree.c -o $(BASE_BUILD_PATH)/Tree.o
+	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Process.c -o $(COMMON_BUILD_PATH)/Process.o
+	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Thread.c -o $(COMMON_BUILD_PATH)/Thread.o
+	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Lock.c -o $(COMMON_BUILD_PATH)/Lock.o
+	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Fifo.c -o $(RPC_BUILD_PATH)/Fifo.o
 
 ################################################################################
 #链接Test
