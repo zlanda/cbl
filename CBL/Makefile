@@ -71,7 +71,8 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(COMMON_BUILD_PATH)/Process.o \
 		$(COMMON_BUILD_PATH)/Thread.o \
 		$(COMMON_BUILD_PATH)/Lock.o \
-		$(RPC_BUILD_PATH)/Fifo.o
+		$(RPC_BUILD_PATH)/Fifo.o \
+		-lpthread
 
 #编译Base
 $(BASE_LIB)_objs:

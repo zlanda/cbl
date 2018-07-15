@@ -17,7 +17,11 @@ extern "C" {
 /* 内部头文件 */
 #include "Types.h"
 
+/* 系统头文件 */
+#include <unistd.h>
+#include <sys/wait.h>
 
+/* 进程对外接口 */
 
 #ifdef __cplusplus
 }

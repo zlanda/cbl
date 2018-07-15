@@ -17,7 +17,10 @@ extern "C" {
 /* 内部头文件 */
 #include "Types.h"
 
+/* 系统头文件 */
+#include<pthread.h>
 
+/* 线程对外接口 */
 
 #ifdef __cplusplus
 }
