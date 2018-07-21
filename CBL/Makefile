@@ -85,12 +85,24 @@ RECV_MSGQ_SRC := $(ROOT)/$(TEST)
 RECV_MSGQ_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
+################################################################################
+#定义socket发送目录
+SEND_SOCK := SockSend
+SEND_SOCK_SRC := $(ROOT)/$(TEST)
+SEND_SOCK_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+
+#定义socket接收目录
+RECV_SOCK := SockRecv
+RECV_SOCK_SRC := $(ROOT)/$(TEST)
+RECV_SOCK_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
-	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ)
+	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK)
 ################################################################################
 
 #创建文件夹
@@ -211,6 +223,25 @@ $(RECV_MSGQ):	$(RECV_MSGQ)_objs
 #编译RecvMsgQ
 $(RECV_MSGQ)_objs:
 	$(CC) $(CFLAGS) -c $(RECV_MSGQ_SRC)/msgrecv.c -o $(RECV_MSGQ_BUILD_PATH)/msgrecv.o
+################################################################################
+
+#测试socket消息通信
+################################################################################
+#链接SockSend
+$(SEND_SOCK):	$(SEND_SOCK)_objs
+	$(CC) $(CFLAGS) -o $(SEND_SOCK_BUILD_PATH)/$(SEND_SOCK) $(SEND_SOCK_BUILD_PATH)/socket_send.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译SendMsgQ
+$(SEND_SOCK)_objs:
+	$(CC) $(CFLAGS) -c $(SEND_SOCK_SRC)/socket_send.c -o $(SEND_SOCK_BUILD_PATH)/socket_send.o
+
+#链接RecvMsgQ
+$(RECV_SOCK):	$(RECV_SOCK)_objs
+	$(CC) $(CFLAGS) -o $(RECV_SOCK_BUILD_PATH)/$(RECV_SOCK) $(RECV_SOCK_BUILD_PATH)/socket_recv.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译RecvMsgQ
+$(RECV_SOCK)_objs:
+	$(CC) $(CFLAGS) -c $(RECV_SOCK_SRC)/socket_recv.c -o $(RECV_SOCK_BUILD_PATH)/socket_recv.o
 ################################################################################
 
 ################################################################################
