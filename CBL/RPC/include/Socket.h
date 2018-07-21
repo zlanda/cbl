@@ -61,14 +61,13 @@ extern "C" {
 
 /* 定义socket对外接口 */
 /* 创建服务器端socket */
-INT32 CreateUnixServerSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum);
+INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum);
 
 /* 创建客户端socket */
-INT32 CreateUnixClientSocket(CHAR *pcSockPath);
+INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath);
 
 /* 等待客户端连接 */
 INT32 AcceptUnixSocket(INT32 iSockFd);
-
 
 /* 关闭socket */
 VOID CloseUnixSocket(INT32 iSockFd);
@@ -78,6 +77,12 @@ INT32 SendMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags)
 
 /* 接收消息 */
 INT32 RecvMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags);
+
+/* 创建服务器端socket */
+INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath);
+
+/* 创建客户端socket */
+INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath);
 
 #ifdef __cplusplus
 }

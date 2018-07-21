@@ -10,7 +10,7 @@
 #include "Socket.h"
 
 /*******************************************************************************
-*   函 数   名：Socket_NonBlock_Set
+*   函 数   名：SocketNonBlockSet
 *   功     能：设置socket fd为非阻塞模式
 *   输入参数：iSockFd:socket文件描述符
 *   输出参数：无
@@ -20,7 +20,7 @@
 *   创建日期：018-7-21
 *   修改历史：无
 *******************************************************************************/
-static BOOL Socket_NonBlock_Set(INT32 iSockFd)  
+static BOOL SocketNonBlockSet(INT32 iSockFd)  
 {  
     INT32 iSockOptions;  
 
@@ -40,7 +40,7 @@ static BOOL Socket_NonBlock_Set(INT32 iSockFd)
 }
 
 /*******************************************************************************
-*   函 数   名：CreateUnixServerSocket
+*   函 数   名：CreateUnixServerTCPSocket
 *   功     能：创建Unix Socket服务器端
 *   输入参数：pcSockPath:PATH文件路径
 *             uiMaxConnNum:最大连接个数
@@ -51,7 +51,7 @@ static BOOL Socket_NonBlock_Set(INT32 iSockFd)
 *   创建日期：018-7-18
 *   修改历史：无
 *******************************************************************************/
-INT32 CreateUnixServerSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
+INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 {
 	INT32 iSockFd = -1;
 	BOOL bSockOptions = CBL_FALSE;
@@ -71,7 +71,7 @@ INT32 CreateUnixServerSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 
 #if 0
 	/* 设置socket文件描述符为非阻塞模式 */
-	bSockOptions = Socket_NonBlock_Set(iSockFd);
+	bSockOptions = SocketNonBlockSet(iSockFd);
 	if (!bSockOptions)
 	{
 		return CBL_CREATE_UNIX_SERVER_SOCKET_MODE_FAILED;
@@ -99,7 +99,7 @@ INT32 CreateUnixServerSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 }
 
 /*******************************************************************************
-*   函 数   名：CreateUnixClientSocket
+*   函 数   名：CreateUnixClientTCPSocket
 *   功     能：创建Unix Socket客户端
 *   输入参数：pcSockPath:PATH文件路径
 *   输出参数：无
@@ -109,7 +109,7 @@ INT32 CreateUnixServerSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 *   创建日期：018-7-21
 *   修改历史：无
 *******************************************************************************/
-INT32 CreateUnixClientSocket(CHAR *pcSockPath)
+INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath)
 {
 	INT32 iSockFd = -1;
 	INT32 iOnFlag = 1;
@@ -176,7 +176,6 @@ INT32 AcceptUnixSocket(INT32 iSockFd)
 	
 	return iConnectFd;
 }
-
 
 /*******************************************************************************
 *   函 数   名：CloseUnixSocket
@@ -291,4 +290,91 @@ INT32 RecvMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags)
 	
 	return iRecvLen;
 }
+
+/*******************************************************************************
+*   函 数   名：CreateUnixServerUDPSocket
+*   功     能：创建Unix Socket服务器端
+*   输入参数：pcSockPath:PATH文件路径
+*   输出参数：无
+*   返 回 值：>0:socket文件描述符
+*             <0:创建失败
+*   作     者：zhanxc
+*   创建日期：018-7-18
+*   修改历史：无
+*******************************************************************************/
+INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath)
+{
+	INT32 iSockFd = -1;
+	struct sockaddr_un stSockAddr;
+
+	if (CBL_NULL == pcSockPath)
+	{
+		return CBL_CREATE_UNIX_SERVER_SOCKET_PATH_VALID;
+	}
+
+	/* 创建socket */
+	iSockFd = socket(AF_UNIX, SOCK_DGRAM, 0);
+	if (iSockFd < 0)
+	{
+		return CBL_CREATE_UNIX_SERVER_SOCKET_CREATE_FAILED;
+	}
+
+	/* 设置socket地址 */
+	bzero(&stSockAddr, sizeof(stSockAddr));
+	stSockAddr.sun_family = AF_UNIX;
+	memcpy(stSockAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
+
+	/* socket与地址绑定 */
+	if (bind(iSockFd, (struct sockaddr *)&stSockAddr, sizeof(stSockAddr)) < 0)
+	{  
+		return CBL_CREATE_UNIX_SERVER_SOCKET_BIND_FAILED;
+    }
+
+	return iSockFd;
+}
+
+/*******************************************************************************
+*   函 数   名：CreateUnixClientUDPSocket
+*   功     能：创建Unix Socket客户端
+*   输入参数：pcSockPath:PATH文件路径
+*   输出参数：无
+*   返 回 值：>0:socket文件描述符
+*             <0:创建失败
+*   作     者：zhanxc
+*   创建日期：018-7-21
+*   修改历史：无
+*******************************************************************************/
+INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath)
+{
+	INT32 iSockFd = -1;
+	INT32 iOnFlag = 1;
+	struct sockaddr_un stServerAddr;
+
+	if (CBL_NULL == pcSockPath)
+	{
+        return CBL_CREATE_UNIX_CLIENT_SOCKET_PATH_VALID;  
+	}
+
+	/* 创建socket */
+	if((iSockFd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
+    {  
+        return CBL_CREATE_UNIX_CLIENT_SOCKET_CREATE_FAILED;  
+    }
+
+	setsockopt(iSockFd, SOL_SOCKET, SO_REUSEADDR, &iOnFlag, sizeof(iOnFlag));
+
+	/* 设置地址 */
+	memset(&stServerAddr, 0, sizeof(stServerAddr));
+	stServerAddr.sun_family = AF_UNIX;  
+	memcpy(stServerAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
+
+	/* 连接服务器端 */
+    if(connect(iSockFd, (struct sockaddr*)&stServerAddr, sizeof(stServerAddr)) < 0)
+    {  
+        return CBL_CREATE_UNIX_CLIENT_SOCKET_CONNECT_FAILED;  
+    }
+
+	return iSockFd;
+}
+
 
