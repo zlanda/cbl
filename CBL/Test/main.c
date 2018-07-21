@@ -6,13 +6,19 @@
 #include "HashTable.h"
 #include "Btree.h"
 #include "Tree.h"
+#include "Process.h"
+#include "Pipe.h"
 
 #define LIST_TEST                               0
 #define QUEUE_TEST                              0
 #define STACK_TEST                              0
 #define HASHTABLE_TEST                          0
 #define BTREE_TESE                              0
-#define TREE_TESE                               1
+#define TREE_TESE                               0
+#define PROCESS_FORK_TEST                       0
+#define PROCESS_VFORK_TEST                      0
+#define PIPE_TEST								0
+#define POPEN_TEST                              1
 
 #if LIST_TEST
 typedef struct LIST_NODE_Tag
@@ -831,6 +837,138 @@ int main()
 	printf("Tree:\r\n");
 	/* 遍历树 */
 	TreeTraversal(&g_stTree);
+#endif
+
+#if PROCESS_FORK_TEST
+    pid_t iPid = 0;
+    UINT32 uiData = 10;
+
+    iPid = CBLFork();
+    if (-1 == iPid)
+    {
+        printf("CBLFork Fail.\r\n");
+    }
+    else if (0 == iPid)
+    {
+        uiData++;
+        printf("Hello Child Pid:%d Return:%d Data:%d\r\n", CBLGetPid(), iPid, uiData);
+    }
+    else
+    {
+        uiData++;
+        printf("Hello Parent Pid:%d Return:%d Data:%d\r\n", CBLGetPid(), iPid, uiData);
+    }
+
+#endif
+
+#if PROCESS_VFORK_TEST
+    pid_t iPid = 0;
+    UINT32 uiData = 10;
+
+    iPid = vfork();
+    if (iPid < 0)
+    {
+        printf("CBLFork Fail.\r\n");
+    }
+    else if (0 == iPid)
+    {
+        uiData++;
+        printf("Hello Child Pid:%d Return:%d Data:%d\r\n", CBLGetPid(), iPid, uiData);
+        //execl("/bin/cat","cat","/home/zhanxc/work/cbl/CBL/Test/main.c","/home/zhanxc/work/cbl/CBL/Makefile",NULL);
+        execlp("ps", "ps", "-ef", CBL_NULL);
+        //注：线程退出必须用exit，不能用return，否则会出现段错误
+        exit(0);
+    }
+    else
+    {
+        uiData++;
+        printf("Hello Parent Pid:%d Return:%d Data:%d\r\n", CBLGetPid(), iPid, uiData);
+    }
+    
+#endif
+
+#if PIPE_TEST
+	INT32 iFd[CBL_PIPE_NUM];
+	CHAR cBuffer[CBL_PIPE_BUFFER_LEN];
+	pid_t iPid;
+	INT32 iRet = 0;
+	INT32 iWrRet = 0;
+	INT32 iRdRet = 0;
+	CHAR cWrBuffer[] = "Hello, This is a test for send message to son.\n";
+
+	/* 创建管道 */
+	iRet = CreatePipe(iFd);
+	if (iRet < 0)
+	{
+		exit(1);
+	}
+
+	/* 创建子进程 */
+	if ((iPid = fork()) < 0)
+	{
+		exit(1);
+	}
+	else if (iPid > 0)
+	{
+		/* 父进程中关闭管道的读出端 */
+		ClosePipe(iFd[CBL_PIPE_READ_FD]);
+		
+		/* 父进程向管道写入数据 */
+		iWrRet = WritePipe(iFd[CBL_PIPE_WRITE_FD], cWrBuffer, sizeof(cWrBuffer));
+		printf("Write Return:%d\r\n", iWrRet);
+
+		/* 写完关闭管道 */
+		ClosePipe(iFd[CBL_PIPE_WRITE_FD]);
+		
+		return 0;
+	}
+	else
+	{
+		/* 子进程关闭管道的写入端 */
+		ClosePipe(iFd[CBL_PIPE_WRITE_FD]);
+
+		/* 子进程从管道中读出数据 */
+		iRdRet = ReadPipe(iFd[CBL_PIPE_READ_FD], cBuffer, CBL_PIPE_BUFFER_LEN);
+		if (iRdRet < 0)
+		{
+			printf("Read data from pipe failed.\r\n");
+			return 0;
+		}
+		else
+		{
+			printf("Read Len:%d\r\n", iRdRet);
+			printf("%s", cBuffer);
+
+			/* 读完关闭管道 */
+			ClosePipe(iFd[CBL_PIPE_READ_FD]);
+			
+			return 0;
+		}
+	}
+	
+#endif
+
+#if POPEN_TEST
+    FILE *pFile;
+    CHAR *cmd = "ls -al";
+    CHAR acBuff[1000];
+
+    pFile = CreatePopen(cmd, "r");
+    if (NULL == pFile)
+    {
+        printf("Failed to popen.\r\n");
+        exit(1);
+    }
+
+    while (CBL_NULL != (ReadPopen(acBuff, 1000, pFile)))
+    {
+        printf("%s", acBuff);
+    }
+
+    ClosePclose(pFile);
+
+    exit(0);
+    
 #endif
 
     return 0;

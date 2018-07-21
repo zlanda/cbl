@@ -18,6 +18,8 @@ extern "C" {
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <errno.h>
+#include <unistd.h>
 
 #ifndef INT8
 typedef signed char                 INT8;
@@ -25,6 +27,14 @@ typedef signed char                 INT8;
 
 #ifndef UINT8
 typedef unsigned char               UINT8;
+#endif
+
+#ifndef CHAR
+typedef char                 		CHAR;
+#endif
+
+#ifndef UCHAR
+typedef unsigned char               UCHAR;
 #endif
 
 #ifndef INT16
