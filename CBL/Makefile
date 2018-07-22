@@ -109,13 +109,25 @@ EPOLL_CLIENT_SRC := $(ROOT)/$(TEST)
 EPOLL_CLIENT_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
+################################################################################
+#定义Select Server发送目录
+SELECT_SERVER := SelectServer
+SELECT_SERVER_SRC := $(ROOT)/$(TEST)
+SELECT_SERVER_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+
+#定义Select Client接收目录
+SELECT_CLIENT := SelectClient
+SELECT_CLIENT_SRC := $(ROOT)/$(TEST)
+SELECT_CLIENT_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
-	$(EPOLL_SERVER) $(EPOLL_CLIENT)
+	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT)
 ################################################################################
 
 #创建文件夹
@@ -276,6 +288,25 @@ $(EPOLL_CLIENT):	$(EPOLL_CLIENT)_objs
 #编译EpollClient
 $(EPOLL_CLIENT)_objs:
 	$(CC) $(CFLAGS) -c $(EPOLL_CLIENT_SRC)/epoll_client.c -o $(EPOLL_CLIENT_BUILD_PATH)/epoll_client.o
+################################################################################
+
+#测试Select
+################################################################################
+#链接SelectServer
+$(SELECT_SERVER):	$(SELECT_SERVER)_objs
+	$(CC) $(CFLAGS) -o $(SELECT_SERVER_BUILD_PATH)/$(SELECT_SERVER) $(SELECT_SERVER_BUILD_PATH)/select_server.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译SelectServer
+$(SELECT_SERVER)_objs:
+	$(CC) $(CFLAGS) -c $(SELECT_SERVER_SRC)/select_server.c -o $(SELECT_SERVER_BUILD_PATH)/select_server.o
+
+#链接SelectClient
+$(SELECT_CLIENT):	$(SELECT_CLIENT)_objs
+	$(CC) $(CFLAGS) -o $(SELECT_CLIENT_BUILD_PATH)/$(SELECT_CLIENT) $(SELECT_CLIENT_BUILD_PATH)/select_client.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译SelectClient
+$(SELECT_CLIENT)_objs:
+	$(CC) $(CFLAGS) -c $(SELECT_CLIENT_SRC)/select_client.c -o $(SELECT_CLIENT_BUILD_PATH)/select_client.o
 ################################################################################
 
 ################################################################################
