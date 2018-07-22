@@ -54,7 +54,9 @@ static BOOL SocketNonBlockSet(INT32 iSockFd)
 INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 {
 	INT32 iSockFd = -1;
+#if 0
 	BOOL bSockOptions = CBL_FALSE;
+#endif
 	struct sockaddr_un stSockAddr;
 
 	if (CBL_NULL == pcSockPath)

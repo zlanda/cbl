@@ -7,8 +7,8 @@
 *   修改历史：无
 *******************************************************************************/
 
-#ifndef  _CBL_RPC_FIFO_H_
-#define  _CBL_RPC_FIFO_H_
+#ifndef  _CBL_RPC_SOCKET_H_
+#define  _CBL_RPC_SOCKET_H_
 
 #ifdef __cplusplus
 extern "C" {

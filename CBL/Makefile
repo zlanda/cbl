@@ -97,12 +97,25 @@ RECV_SOCK_SRC := $(ROOT)/$(TEST)
 RECV_SOCK_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
+################################################################################
+#定义Epoll Server发送目录
+EPOLL_SERVER := EpollServer
+EPOLL_SERVER_SRC := $(ROOT)/$(TEST)
+EPOLL_SERVER_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+
+#定义Epoll Client接收目录
+EPOLL_CLIENT := EpollClient
+EPOLL_CLIENT_SRC := $(ROOT)/$(TEST)
+EPOLL_CLIENT_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
-	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK)
+	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
+	$(EPOLL_SERVER) $(EPOLL_CLIENT)
 ################################################################################
 
 #创建文件夹
@@ -131,6 +144,7 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(RPC_BUILD_PATH)/Sem.o \
 		$(RPC_BUILD_PATH)/Msqid.o \
 		$(RPC_BUILD_PATH)/Socket.o \
+		$(RPC_BUILD_PATH)/Epoll.o \
 		-lpthread
 
 #编译Base
@@ -150,6 +164,7 @@ $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Sem.c -o $(RPC_BUILD_PATH)/Sem.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Msqid.c -o $(RPC_BUILD_PATH)/Msqid.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Socket.c -o $(RPC_BUILD_PATH)/Socket.o
+	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Epoll.c -o $(RPC_BUILD_PATH)/Epoll.o
 
 ################################################################################
 #链接Test
@@ -242,6 +257,25 @@ $(RECV_SOCK):	$(RECV_SOCK)_objs
 #编译RecvMsgQ
 $(RECV_SOCK)_objs:
 	$(CC) $(CFLAGS) -c $(RECV_SOCK_SRC)/socket_recv.c -o $(RECV_SOCK_BUILD_PATH)/socket_recv.o
+################################################################################
+
+#测试Epoll
+################################################################################
+#链接EpollServer
+$(EPOLL_SERVER):	$(EPOLL_SERVER)_objs
+	$(CC) $(CFLAGS) -o $(EPOLL_SERVER_BUILD_PATH)/$(EPOLL_SERVER) $(EPOLL_SERVER_BUILD_PATH)/epoll_server.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译EpollServer
+$(EPOLL_SERVER)_objs:
+	$(CC) $(CFLAGS) -c $(EPOLL_SERVER_SRC)/epoll_server.c -o $(EPOLL_SERVER_BUILD_PATH)/epoll_server.o
+
+#链接EpollClient
+$(EPOLL_CLIENT):	$(EPOLL_CLIENT)_objs
+	$(CC) $(CFLAGS) -o $(EPOLL_CLIENT_BUILD_PATH)/$(EPOLL_CLIENT) $(EPOLL_CLIENT_BUILD_PATH)/epoll_client.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译EpollClient
+$(EPOLL_CLIENT)_objs:
+	$(CC) $(CFLAGS) -c $(EPOLL_CLIENT_SRC)/epoll_client.c -o $(EPOLL_CLIENT_BUILD_PATH)/epoll_client.o
 ################################################################################
 
 ################################################################################
