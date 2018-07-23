@@ -294,3 +294,129 @@ VOID CreateAlarmStdTimer(INT32 iSeconds, fSignalHandler fSigTimeoutHandler)
     return ;  
 }
 
+/*******************************************************************************
+*   函 数   名：CreateTimer
+*   功     能：创建定时器
+*   输入参数：iStartDelay:启动间隔iStartDelay时间后开始装载定时器
+*			  iTimerDelay:定时器间隔周期
+*             fTimerHandler:定时器处理回调函数
+*   输出参数：无
+*   返 回 值：无
+*   作     者：zhanxc
+*   创建日期：018-7-23
+*   修改历史：无
+*******************************************************************************/
+VOID CreateTimer(INT32 iStartDelay, INT32 iTimerDelay, fTimerProcessHandler fTimerHandler)
+{
+	// int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid);
+	// clockid：CLOCK_REALTIME,CLOCK_MONOTONIC,CLOCK_PROCESS_CPUTIME_ID,CLOCK_THREAD_CPUTIME_ID
+	// evp：存放环境值的地址,结构成员说明了定时器到期的通知方式和处理方式等
+	// timerid：定时器标识符
+	timer_t iTimerId;
+	struct sigevent stSigEvp;
+	struct itimerspec stItimer;
+	
+	memset(&stSigEvp, 0, sizeof(struct sigevent));	//清零初始化
+
+	stSigEvp.sigev_value.sival_int = 111;			//也是标识定时器的，这和timerid有什么区别？回调函数可以获得
+	stSigEvp.sigev_notify = SIGEV_THREAD;			//线程通知的方式，派驻新线程
+	stSigEvp.sigev_notify_function = fTimerHandler;	//线程函数地址
+
+	if (timer_create(CLOCK_REALTIME, &stSigEvp, &iTimerId) == -1)
+	{
+		printf("Fail to timer_create");
+		return;
+	}
+
+	// int timer_settime(timer_t timerid, int flags, const struct itimerspec *new_value,struct itimerspec *old_value);
+	// timerid：定时器标识
+	// flags：0表示相对时间，1表示绝对时间，通常使用相对时间
+	// new_value：定时器的新初始值和间隔，如下面的it
+	// old_value：取值通常为0，即第四个参数常为NULL,若不为NULL，则返回定时器的前一个值
+
+	// 第一次间隔stItimer.it_value这么长,以后每次都是stItimer.it_interval这么长,就是说stItimer.it_value变0的时候会装载stItimer.it_interval的值
+	// stItimer.it_interval可以理解为周期
+	stItimer.it_interval.tv_sec = iTimerDelay;		//间隔时间
+	stItimer.it_interval.tv_nsec = 0;
+	stItimer.it_value.tv_sec = iStartDelay; 		//启动间隔时间
+	stItimer.it_value.tv_nsec = 0;
+
+	if (timer_settime(iTimerId, 0, &stItimer, NULL) == -1)
+	{
+		printf("Fail to timer_settime");
+		return;
+	}
+
+    return ;  
+}
+
+/*******************************************************************************
+*   函 数   名：CreateTimer
+*   功     能：创建定时器
+*   输入参数：iStartDelay:启动间隔iStartDelay时间后开始装载定时器
+*			  iTimerDelay:定时器间隔周期
+*             fTimerHandler:定时器处理回调函数
+*   输出参数：无
+*   返 回 值：无
+*   作     者：zhanxc
+*   创建日期：018-7-23
+*   修改历史：无
+*******************************************************************************/
+VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTimerHandler)
+{
+	// int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
+	// signum：指定的信号编号，可以指定SIGKILL和SIGSTOP以外的所有信号编号
+	// act结构体：设置信号编号为signum的处理方式
+	// oldact结构体：保存上次的处理方式
+	//
+	// struct sigaction 
+	// {
+	// 		void (*sa_handler)(int); 		//信号响应函数地址
+	// 		void (*sa_sigaction)(int, siginfo_t *, void *);	 //但sa_flags为SA——SIGINFO时才使用
+	// 		sigset_t sa_mask;		 //说明一个信号集在调用捕捉函数之前，会加入进程的屏蔽中，当捕捉函数返回时，还原
+	// 		int sa_flags;
+	// 		void (*sa_restorer)(void);	//未用
+	// };
+	//
+	timer_t iTimerId;
+	struct sigevent stSigEvp;
+	struct itimerspec stItimer;
+	struct sigaction stSigAction;
+	
+	memset(&stSigAction, 0, sizeof(stSigAction));
+	stSigAction.sa_handler = fTimerHandler;
+	stSigAction.sa_flags = 0;
+
+	// int sigaddset(sigset_t *set, int signum);  //将signum指定的信号加入set信号集
+	// int sigemptyset(sigset_t *set);			//初始化信号集
+
+	sigemptyset(&stSigAction.sa_mask);
+
+	if (sigaction(SIGUSR1, &stSigAction, NULL) == -1)
+	{
+		printf("Fail to sigaction.\n");
+		return;
+	}
+
+	memset(&stSigEvp, 0, sizeof(struct sigevent));
+	stSigEvp.sigev_signo = SIGUSR1;
+	stSigEvp.sigev_notify = SIGEV_SIGNAL;
+	if (timer_create(CLOCK_REALTIME, &stSigEvp, &iTimerId) == -1)
+	{
+		printf("Fail to timer_create.\n");
+		return;
+	}
+
+	stItimer.it_interval.tv_sec = iTimerDelay;
+	stItimer.it_interval.tv_nsec = 0;
+	stItimer.it_value.tv_sec = iStartDelay;
+	stItimer.it_value.tv_nsec = 0;
+	if (timer_settime(iTimerId, 0, &stItimer, 0) == -1)
+	{
+		printf("Fail to timer_settime.\n");
+		return;
+	}
+
+    return ;  
+}
+

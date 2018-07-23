@@ -173,7 +173,7 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(RPC_BUILD_PATH)/Socket.o \
 		$(RPC_BUILD_PATH)/Epoll.o \
 		$(RPC_BUILD_PATH)/Signal.o \
-		-lpthread
+		-lpthread -lrt
 
 #编译Base
 $(BASE_LIB)_objs:

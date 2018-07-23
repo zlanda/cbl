@@ -6,7 +6,9 @@
 #define TIME_TEST                           0
 #define TIMER_SELECT_TEST                   0
 #define TIMER_ALARM_TEST                    0
-#define TIMER_ALARM_STD_TEST				1
+#define TIMER_ALARM_STD_TEST				0
+#define TIMER_CREATE_TEST					0
+#define TIMER_SIGNAL_CREATE_TEST			1
 
 #if TIME_TEST
 #define FORMAT_TIME_LEN                     80
@@ -50,6 +52,20 @@ VOID TimerProcessTimeout(INT32 iSigNum)
     return;
 }
 
+#endif
+
+#if TIMER_CREATE_TEST
+VOID TimerThread(union sigval unSigVal)
+{
+	printf("TimerThread function! %d\n", unSigVal.sival_int);
+}
+#endif
+
+#if TIMER_SIGNAL_CREATE_TEST
+VOID TimerThread(INT32 iSigNum)
+{
+	printf("timer_signal function! %d\n", iSigNum);
+}
 #endif
 
 int main()
@@ -125,6 +141,22 @@ int main()
 			break;
 		}
     }
+#endif
+
+#if TIMER_CREATE_TEST
+	CreateTimer(2, 3, TimerThread);
+	while (1)
+	{
+		sleep(1);
+	}
+#endif
+
+#if TIMER_SIGNAL_CREATE_TEST
+	CreateSignalTimer(2, 3, TimerThread);
+	while (1)
+	{
+		sleep(1);
+	}
 #endif
 
     return 0;

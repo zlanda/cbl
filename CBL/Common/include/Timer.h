@@ -21,6 +21,8 @@ extern "C" {
 /* 内部头文件 */
 #include "Types.h"
 
+typedef VOID (*fTimerProcessHandler)(union sigval unSigVal);
+
 /* 时间及定时器对外接口 */
 time_t Time(time_t *pstSeconds);
 
@@ -47,6 +49,10 @@ VOID CreateSelectTimer(INT32 iSeconds, INT32 iMesconds);
 VOID CreateAlarmTimer(INT32 iSeconds, fSignalActionHandler fSigTimeoutHandler);
 
 VOID CreateAlarmStdTimer(INT32 iSeconds, fSignalHandler fSigTimeoutHandler);
+
+VOID CreateTimer(INT32 iStartDelay, INT32 iTimerDelay, fTimerProcessHandler fTimerHandler);
+
+VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTimerHandler);
 
 #ifdef __cplusplus
 }
