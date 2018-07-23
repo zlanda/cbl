@@ -1,26 +1,26 @@
 /*******************************************************************************
-*   æ–‡  ä»¶ åï¼šSocket.c
-*   åŠŸ     èƒ½ï¼šå°è£…Unix Socket IPCåŠŸèƒ½
-*   ä½œ     è€…ï¼šzhanxc
+*   ÎÄ  ¼ş Ãû£ºSocket.c
+*   ¹¦     ÄÜ£º·â×°Unix Socket IPC¹¦ÄÜ
+*   ×÷     Õß£ºzhanxc
 *   E-Mail   : zhanxc_chpu@sina.com
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 
 #include "Socket.h"
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šSocketNonBlockSet
-*   åŠŸ     èƒ½ï¼šè®¾ç½®socket fdä¸ºéé˜»å¡æ¨¡å¼
-*   è¾“å…¥å‚æ•°ï¼šiSockFd:socketæ–‡ä»¶æè¿°ç¬¦
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼šCBL_FALSE:è®¾ç½®å¤±è´¥
-*             CBL_TRUE:è®¾ç½®æˆåŠŸ
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºSocketNonBlockSet
+*   ¹¦     ÄÜ£ºÉèÖÃsocket fdÎª·Ç×èÈûÄ£Ê½
+*   ÊäÈë²ÎÊı£ºiSockFd:socketÎÄ¼şÃèÊö·û
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£ºCBL_FALSE:ÉèÖÃÊ§°Ü
+*             CBL_TRUE:ÉèÖÃ³É¹¦
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
-static BOOL SocketNonBlockSet(INT32 iSockFd)  
+BOOL SocketNonBlockSet(INT32 iSockFd)  
 {  
     INT32 iSockOptions;  
 
@@ -40,16 +40,16 @@ static BOOL SocketNonBlockSet(INT32 iSockFd)
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šCreateUnixServerTCPSocket
-*   åŠŸ     èƒ½ï¼šåˆ›å»ºUnix SocketæœåŠ¡å™¨ç«¯
-*   è¾“å…¥å‚æ•°ï¼špcSockPath:PATHæ–‡ä»¶è·¯å¾„
-*             uiMaxConnNum:æœ€å¤§è¿æ¥ä¸ªæ•°
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼š>0:socketæ–‡ä»¶æè¿°ç¬¦
-*             <0:åˆ›å»ºå¤±è´¥
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-18
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºCreateUnixServerTCPSocket
+*   ¹¦     ÄÜ£º´´½¨Unix Socket·şÎñÆ÷¶Ë
+*   ÊäÈë²ÎÊı£ºpcSockPath:PATHÎÄ¼şÂ·¾¶
+*             uiMaxConnNum:×î´óÁ¬½Ó¸öÊı
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º>0:socketÎÄ¼şÃèÊö·û
+*             <0:´´½¨Ê§°Ü
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-18
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 {
@@ -64,7 +64,7 @@ INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 		return CBL_CREATE_UNIX_SERVER_SOCKET_PATH_VALID;
 	}
 
-	/* åˆ›å»ºsocket */
+	/* ´´½¨socket */
 	iSockFd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (iSockFd < 0)
 	{
@@ -72,7 +72,7 @@ INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 	}
 
 #if 0
-	/* è®¾ç½®socketæ–‡ä»¶æè¿°ç¬¦ä¸ºéé˜»å¡æ¨¡å¼ */
+	/* ÉèÖÃsocketÎÄ¼şÃèÊö·ûÎª·Ç×èÈûÄ£Ê½ */
 	bSockOptions = SocketNonBlockSet(iSockFd);
 	if (!bSockOptions)
 	{
@@ -80,18 +80,18 @@ INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 	}
 #endif
 
-	/* è®¾ç½®socketåœ°å€ */
+	/* ÉèÖÃsocketµØÖ· */
 	bzero(&stSockAddr, sizeof(stSockAddr));
 	stSockAddr.sun_family = AF_UNIX;
 	memcpy(stSockAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
 
-	/* socketä¸åœ°å€ç»‘å®š */
+	/* socketÓëµØÖ·°ó¶¨ */
 	if (bind(iSockFd, (struct sockaddr *)&stSockAddr, sizeof(stSockAddr)) < 0)
 	{  
 		return CBL_CREATE_UNIX_SERVER_SOCKET_BIND_FAILED;
     }
 
-	/* ç›‘å¬å®¢æˆ·ç«¯è¿æ¥ */
+	/* ¼àÌı¿Í»§¶ËÁ¬½Ó */
 	if (listen(iSockFd, uiMaxConnNum) < 0)
 	{
 		return CBL_CREATE_UNIX_SERVER_SOCKET_LISTEN_FAILED;
@@ -101,15 +101,15 @@ INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum)
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šCreateUnixClientTCPSocket
-*   åŠŸ     èƒ½ï¼šåˆ›å»ºUnix Socketå®¢æˆ·ç«¯
-*   è¾“å…¥å‚æ•°ï¼špcSockPath:PATHæ–‡ä»¶è·¯å¾„
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼š>0:socketæ–‡ä»¶æè¿°ç¬¦
-*             <0:åˆ›å»ºå¤±è´¥
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºCreateUnixClientTCPSocket
+*   ¹¦     ÄÜ£º´´½¨Unix Socket¿Í»§¶Ë
+*   ÊäÈë²ÎÊı£ºpcSockPath:PATHÎÄ¼şÂ·¾¶
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º>0:socketÎÄ¼şÃèÊö·û
+*             <0:´´½¨Ê§°Ü
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath)
 {
@@ -122,7 +122,7 @@ INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath)
         return CBL_CREATE_UNIX_CLIENT_SOCKET_PATH_VALID;  
 	}
 
-	/* åˆ›å»ºsocket */
+	/* ´´½¨socket */
 	if((iSockFd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
     {  
         return CBL_CREATE_UNIX_CLIENT_SOCKET_CREATE_FAILED;  
@@ -130,12 +130,12 @@ INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath)
 
 	setsockopt(iSockFd, SOL_SOCKET, SO_REUSEADDR, &iOnFlag, sizeof(iOnFlag));
 
-	/* è®¾ç½®åœ°å€ */
+	/* ÉèÖÃµØÖ· */
 	memset(&stServerAddr, 0, sizeof(stServerAddr));
 	stServerAddr.sun_family = AF_UNIX;  
 	memcpy(stServerAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
 
-	/* è¿æ¥æœåŠ¡å™¨ç«¯ */
+	/* Á¬½Ó·şÎñÆ÷¶Ë */
     if(connect(iSockFd, (struct sockaddr*)&stServerAddr, sizeof(stServerAddr)) < 0)
     {  
         return CBL_CREATE_UNIX_CLIENT_SOCKET_CONNECT_FAILED;  
@@ -145,15 +145,15 @@ INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath)
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šAcceptUnixSocket
-*   åŠŸ     èƒ½ï¼šç­‰å¾…å®¢æˆ·ç«¯è¿æ¥
-*   è¾“å…¥å‚æ•°ï¼šiSockFd:socketæ–‡ä»¶æè¿°ç¬¦
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼šä»å·²å®Œæˆè¿æ¥é˜Ÿåˆ—è¿”å›ä¸‹ä¸€ä¸ªå·²å®Œæˆè¿æ¥ï¼Œå¦‚æœå·²å®Œæˆè¿æ¥é˜Ÿåˆ—ä¸ºç©ºï¼Œ
-*			  é‚£ä¹ˆè¿›ç¨‹è¢«æŠ•å…¥ç¡çœ 
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºAcceptUnixSocket
+*   ¹¦     ÄÜ£ºµÈ´ı¿Í»§¶ËÁ¬½Ó
+*   ÊäÈë²ÎÊı£ºiSockFd:socketÎÄ¼şÃèÊö·û
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º´ÓÒÑÍê³ÉÁ¬½Ó¶ÓÁĞ·µ»ØÏÂÒ»¸öÒÑÍê³ÉÁ¬½Ó£¬Èç¹ûÒÑÍê³ÉÁ¬½Ó¶ÓÁĞÎª¿Õ£¬
+*			  ÄÇÃ´½ø³Ì±»Í¶ÈëË¯Ãß
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 AcceptUnixSocket(INT32 iSockFd)
 {
@@ -161,7 +161,7 @@ INT32 AcceptUnixSocket(INT32 iSockFd)
 	socklen_t iSockAddrLen = 0;
 	INT32 iConnectFd = -1;
 
-	/* æ–‡ä»¶æè¿°ç¬¦éæ³•ï¼Œå¯èƒ½å·²ç»å…³é—­ */
+	/* ÎÄ¼şÃèÊö·û·Ç·¨£¬¿ÉÄÜÒÑ¾­¹Ø±Õ */
 	if (iSockFd < 0)
 	{
 		return CBL_ACCEPT_FAILED;
@@ -180,129 +180,129 @@ INT32 AcceptUnixSocket(INT32 iSockFd)
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šCloseUnixSocket
-*   åŠŸ     èƒ½ï¼šå…³é—­Unix Socket
-*   è¾“å…¥å‚æ•°ï¼šiSockFd:socketæ–‡ä»¶æè¿°ç¬¦
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼šæ— 
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºCloseUnixSocket
+*   ¹¦     ÄÜ£º¹Ø±ÕUnix Socket
+*   ÊäÈë²ÎÊı£ºiSockFd:socketÎÄ¼şÃèÊö·û
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£ºÎŞ
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 VOID CloseUnixSocket(INT32 iSockFd)
 {
-	/* æ–‡ä»¶æè¿°ç¬¦éæ³•ï¼Œå¯èƒ½å·²ç»å…³é—­ */
+	/* ÎÄ¼şÃèÊö·û·Ç·¨£¬¿ÉÄÜÒÑ¾­¹Ø±Õ */
 	if (iSockFd < 0)
 	{
 		return;
 	}
 
-	/* å…³é—­socketæ–‡ä»¶æè¿°ç¬¦ */
+	/* ¹Ø±ÕsocketÎÄ¼şÃèÊö·û */
 	close(iSockFd);
 	
 	return;
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šSendMessage
-*   åŠŸ     èƒ½ï¼šå‘é€æ¶ˆæ¯
-*   è¾“å…¥å‚æ•°ï¼šiSockFd:socketæ–‡ä»¶æè¿°ç¬¦
-*			  pcBuffer:å¾…å‘é€çš„æ¶ˆæ¯å†…å®¹
-*			  iBufferLen:å¾…å‘é€çš„æ¶ˆæ¯é•¿åº¦
-*			  iFlags:è°ƒç”¨æ‰§è¡Œæ–¹å¼
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼šå‘é€æˆåŠŸè¿”å›å‘é€æ•°æ®çš„æ€»æ•°ï¼Œæ³¨æ„è¿™ä¸ªæ•°å­—å¯èƒ½å°äºiBufferLenä¸­æ‰€è§„å®šçš„å¤§å°
-*			  å¤±è´¥è¿”å›é”™è¯¯ç 
-*	é”™ è¯¯ ç : WSANOTINITIALISEDï¼šåœ¨ä½¿ç”¨æ­¤APIä¹‹å‰åº”é¦–å…ˆæˆåŠŸåœ°è°ƒç”¨WSAStartup()ã€‚
-*			  WSAENETDOWNï¼šWINDOWSå¥—æ¥å£å®ç°æ£€æµ‹åˆ°ç½‘ç»œå­ç³»ç»Ÿå¤±æ•ˆã€‚
-*			  WSAEACESSï¼šè¦æ±‚åœ°å€ä¸ºå¹¿æ’­åœ°å€ï¼Œä½†ç›¸å…³æ ‡å¿—æœªèƒ½æ­£ç¡®è®¾ç½®ã€‚
-*			  WSAEINTRï¼šé€šè¿‡ä¸€ä¸ªWSACancelBlockingCall()æ¥å–æ¶ˆä¸€ä¸ªï¼ˆé˜»å¡çš„ï¼‰è°ƒç”¨ã€‚
-*			  WSAEINPROGRESSï¼šä¸€ä¸ªé˜»å¡çš„WINDOWSå¥—æ¥å£è°ƒç”¨æ­£åœ¨è¿è¡Œä¸­ã€‚
-*			  WSAEFAULTï¼šbufå‚æ•°ä¸åœ¨ç”¨æˆ·åœ°å€ç©ºé—´ä¸­çš„æœ‰æ•ˆä½ç½®ã€‚
-*			  WSAENETRESETï¼šç”±äºWINDOWSå¥—æ¥å£å®ç°æ”¾å¼ƒäº†è¿æ¥ï¼Œæ•…è¯¥è¿æ¥å¿…éœ€è¢«å¤ä½ã€‚
-*			  WSAENOBUFSï¼šWINDOWSå¥—æ¥å£å®ç°æŠ¥å‘Šä¸€ä¸ªç¼“å†²åŒºæ­»é”ã€‚
-*			  WSAENOTCONNï¼šå¥—æ¥å£æœªè¢«è¿æ¥ã€‚
-*			  WSAENOTSOCKï¼šæè¿°å­—ä¸æ˜¯ä¸€ä¸ªå¥—æ¥å£ã€‚
-*			  WSAEOPNOTSUPPï¼šå·²è®¾ç½®äº†MSG_OOBï¼Œä½†å¥—æ¥å£éSOCK_STREAMç±»å‹ã€‚
-*			  WSAESHUTDOWNï¼šå¥—æ¥å£å·²è¢«å…³é—­ã€‚ä¸€ä¸ªå¥—æ¥å£ä»¥1æˆ–2çš„howå‚æ•°è°ƒç”¨shutdown()å…³é—­åï¼Œæ— æ³•å†ç”¨send()å‡½æ•°ã€‚
-*			  WSAEWOULDBLOCKï¼š
-*			  WSAEMSGSIZEï¼šå¥—æ¥å£ä¸ºSOCK_DGRAMç±»å‹ï¼Œä¸”æ•°æ®æŠ¥å¤§äºWINDOWSå¥—æ¥å£å®ç°æ‰€æ”¯æŒçš„æœ€å¤§å€¼ã€‚
-*			  WSAEINVALï¼šå¥—æ¥å£æœªç”¨bind()æ†ç»‘ã€‚
-*			  WSAECONNABORTEDï¼šç”±äºè¶…æ—¶æˆ–å…¶ä»–åŸå› å¼•èµ·è™šç”µè·¯çš„ä¸­æ–­ã€‚
-*			  WSAECONNRESETï¼šè™šç”µè·¯è¢«è¿œç«¯å¤ä½ã€‚
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºSendMessage
+*   ¹¦     ÄÜ£º·¢ËÍÏûÏ¢
+*   ÊäÈë²ÎÊı£ºiSockFd:socketÎÄ¼şÃèÊö·û
+*			  pcBuffer:´ı·¢ËÍµÄÏûÏ¢ÄÚÈİ
+*			  iBufferLen:´ı·¢ËÍµÄÏûÏ¢³¤¶È
+*			  iFlags:µ÷ÓÃÖ´ĞĞ·½Ê½
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º·¢ËÍ³É¹¦·µ»Ø·¢ËÍÊı¾İµÄ×ÜÊı£¬×¢ÒâÕâ¸öÊı×Ö¿ÉÄÜĞ¡ÓÚiBufferLenÖĞËù¹æ¶¨µÄ´óĞ¡
+*			  Ê§°Ü·µ»Ø´íÎóÂë
+*	´í Îó Âë: WSANOTINITIALISED£ºÔÚÊ¹ÓÃ´ËAPIÖ®Ç°Ó¦Ê×ÏÈ³É¹¦µØµ÷ÓÃWSAStartup()¡£
+*			  WSAENETDOWN£ºWINDOWSÌ×½Ó¿ÚÊµÏÖ¼ì²âµ½ÍøÂç×ÓÏµÍ³Ê§Ğ§¡£
+*			  WSAEACESS£ºÒªÇóµØÖ·Îª¹ã²¥µØÖ·£¬µ«Ïà¹Ø±êÖ¾Î´ÄÜÕıÈ·ÉèÖÃ¡£
+*			  WSAEINTR£ºÍ¨¹ıÒ»¸öWSACancelBlockingCall()À´È¡ÏûÒ»¸ö£¨×èÈûµÄ£©µ÷ÓÃ¡£
+*			  WSAEINPROGRESS£ºÒ»¸ö×èÈûµÄWINDOWSÌ×½Ó¿Úµ÷ÓÃÕıÔÚÔËĞĞÖĞ¡£
+*			  WSAEFAULT£ºbuf²ÎÊı²»ÔÚÓÃ»§µØÖ·¿Õ¼äÖĞµÄÓĞĞ§Î»ÖÃ¡£
+*			  WSAENETRESET£ºÓÉÓÚWINDOWSÌ×½Ó¿ÚÊµÏÖ·ÅÆúÁËÁ¬½Ó£¬¹Ê¸ÃÁ¬½Ó±ØĞè±»¸´Î»¡£
+*			  WSAENOBUFS£ºWINDOWSÌ×½Ó¿ÚÊµÏÖ±¨¸æÒ»¸ö»º³åÇøËÀËø¡£
+*			  WSAENOTCONN£ºÌ×½Ó¿ÚÎ´±»Á¬½Ó¡£
+*			  WSAENOTSOCK£ºÃèÊö×Ö²»ÊÇÒ»¸öÌ×½Ó¿Ú¡£
+*			  WSAEOPNOTSUPP£ºÒÑÉèÖÃÁËMSG_OOB£¬µ«Ì×½Ó¿Ú·ÇSOCK_STREAMÀàĞÍ¡£
+*			  WSAESHUTDOWN£ºÌ×½Ó¿ÚÒÑ±»¹Ø±Õ¡£Ò»¸öÌ×½Ó¿ÚÒÔ1»ò2µÄhow²ÎÊıµ÷ÓÃshutdown()¹Ø±Õºó£¬ÎŞ·¨ÔÙÓÃsend()º¯Êı¡£
+*			  WSAEWOULDBLOCK£º
+*			  WSAEMSGSIZE£ºÌ×½Ó¿ÚÎªSOCK_DGRAMÀàĞÍ£¬ÇÒÊı¾İ±¨´óÓÚWINDOWSÌ×½Ó¿ÚÊµÏÖËùÖ§³ÖµÄ×î´óÖµ¡£
+*			  WSAEINVAL£ºÌ×½Ó¿ÚÎ´ÓÃbind()À¦°ó¡£
+*			  WSAECONNABORTED£ºÓÉÓÚ³¬Ê±»òÆäËûÔ­ÒòÒıÆğĞéµçÂ·µÄÖĞ¶Ï¡£
+*			  WSAECONNRESET£ºĞéµçÂ·±»Ô¶¶Ë¸´Î»¡£
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 SendMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags)
 {
 	INT32 iSendRet = 0;
 
-	/* æ ¡éªŒå‚æ•° */
+	/* Ğ£Ñé²ÎÊı */
 	if (CBL_NULL == pcBuffer || iBufferLen <= 0)
 	{
 		return CBL_SEND_MESSAGE_MSG_PARAM_VALID;
 	}
 	
-	/* æ–‡ä»¶æè¿°ç¬¦éæ³•ï¼Œå¯èƒ½å·²ç»å…³é—­ */
+	/* ÎÄ¼şÃèÊö·û·Ç·¨£¬¿ÉÄÜÒÑ¾­¹Ø±Õ */
 	if (iSockFd < 0)
 	{
 		return CBL_SEND_MESSAGE_MSG_SOCKET_VALID;
 	}
 
-	/* å‘é€æ¶ˆæ¯ */
+	/* ·¢ËÍÏûÏ¢ */
 	iSendRet = send(iSockFd, pcBuffer, iBufferLen, iFlags);
 	
 	return iSendRet;
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šRecvMessage
-*   åŠŸ     èƒ½ï¼šæ¥æ”¶æ¶ˆæ¯
-*   è¾“å…¥å‚æ•°ï¼šiSockFd:socketæ–‡ä»¶æè¿°ç¬¦
-*			  pcBuffer:æ¥æ”¶æ¶ˆæ¯å­˜æ”¾ç¼“å­˜
-*			  iBufferLen:æ¥æ”¶æ¶ˆæ¯ç¼“å­˜é•¿åº¦
-*			  iFlags:è°ƒç”¨æ‰§è¡Œæ–¹å¼
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼šå¦‚æœæ²¡æœ‰é”™è¯¯å‘ç”Ÿï¼Œè¿”å›è¯»å…¥çš„å­—èŠ‚æ•°
-*			  å¦‚æœè¿æ¥å·²ä¸­æ­¢ï¼Œè¿”å›0
-*			  å¦åˆ™è¿”å›SOCKET_ERRORé”™è¯¯ï¼Œåº”ç”¨ç¨‹åºå¯é€šè¿‡WSAGetLastError()è·å–ç›¸åº”é”™è¯¯ä»£ç ã€‚
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºRecvMessage
+*   ¹¦     ÄÜ£º½ÓÊÕÏûÏ¢
+*   ÊäÈë²ÎÊı£ºiSockFd:socketÎÄ¼şÃèÊö·û
+*			  pcBuffer:½ÓÊÕÏûÏ¢´æ·Å»º´æ
+*			  iBufferLen:½ÓÊÕÏûÏ¢»º´æ³¤¶È
+*			  iFlags:µ÷ÓÃÖ´ĞĞ·½Ê½
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£ºÈç¹ûÃ»ÓĞ´íÎó·¢Éú£¬·µ»Ø¶ÁÈëµÄ×Ö½ÚÊı
+*			  Èç¹ûÁ¬½ÓÒÑÖĞÖ¹£¬·µ»Ø0
+*			  ·ñÔò·µ»ØSOCKET_ERROR´íÎó£¬Ó¦ÓÃ³ÌĞò¿ÉÍ¨¹ıWSAGetLastError()»ñÈ¡ÏàÓ¦´íÎó´úÂë¡£
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 RecvMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags)
 {
 	INT32 iRecvLen = 0;
 
-	/* æ ¡éªŒå‚æ•° */
+	/* Ğ£Ñé²ÎÊı */
 	if (CBL_NULL == pcBuffer || iBufferLen <= 0)
 	{
 		return CBL_SEND_MESSAGE_MSG_PARAM_VALID;
 	}
 	
-	/* æ–‡ä»¶æè¿°ç¬¦éæ³•ï¼Œå¯èƒ½å·²ç»å…³é—­ */
+	/* ÎÄ¼şÃèÊö·û·Ç·¨£¬¿ÉÄÜÒÑ¾­¹Ø±Õ */
 	if (iSockFd < 0)
 	{
 		return CBL_SEND_MESSAGE_MSG_SOCKET_VALID;
 	}
 
-	/* å‘é€æ¶ˆæ¯ */
+	/* ·¢ËÍÏûÏ¢ */
 	iRecvLen = recv(iSockFd, pcBuffer, iBufferLen, iFlags);
 	
 	return iRecvLen;
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šCreateUnixServerUDPSocket
-*   åŠŸ     èƒ½ï¼šåˆ›å»ºUnix SocketæœåŠ¡å™¨ç«¯
-*   è¾“å…¥å‚æ•°ï¼špcSockPath:PATHæ–‡ä»¶è·¯å¾„
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼š>0:socketæ–‡ä»¶æè¿°ç¬¦
-*             <0:åˆ›å»ºå¤±è´¥
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-18
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºCreateUnixServerUDPSocket
+*   ¹¦     ÄÜ£º´´½¨Unix Socket·şÎñÆ÷¶Ë
+*   ÊäÈë²ÎÊı£ºpcSockPath:PATHÎÄ¼şÂ·¾¶
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º>0:socketÎÄ¼şÃèÊö·û
+*             <0:´´½¨Ê§°Ü
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-18
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath)
 {
@@ -314,19 +314,19 @@ INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath)
 		return CBL_CREATE_UNIX_SERVER_SOCKET_PATH_VALID;
 	}
 
-	/* åˆ›å»ºsocket */
+	/* ´´½¨socket */
 	iSockFd = socket(AF_UNIX, SOCK_DGRAM, 0);
 	if (iSockFd < 0)
 	{
 		return CBL_CREATE_UNIX_SERVER_SOCKET_CREATE_FAILED;
 	}
 
-	/* è®¾ç½®socketåœ°å€ */
+	/* ÉèÖÃsocketµØÖ· */
 	bzero(&stSockAddr, sizeof(stSockAddr));
 	stSockAddr.sun_family = AF_UNIX;
 	memcpy(stSockAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
 
-	/* socketä¸åœ°å€ç»‘å®š */
+	/* socketÓëµØÖ·°ó¶¨ */
 	if (bind(iSockFd, (struct sockaddr *)&stSockAddr, sizeof(stSockAddr)) < 0)
 	{  
 		return CBL_CREATE_UNIX_SERVER_SOCKET_BIND_FAILED;
@@ -336,15 +336,15 @@ INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath)
 }
 
 /*******************************************************************************
-*   å‡½ æ•°   åï¼šCreateUnixClientUDPSocket
-*   åŠŸ     èƒ½ï¼šåˆ›å»ºUnix Socketå®¢æˆ·ç«¯
-*   è¾“å…¥å‚æ•°ï¼špcSockPath:PATHæ–‡ä»¶è·¯å¾„
-*   è¾“å‡ºå‚æ•°ï¼šæ— 
-*   è¿” å› å€¼ï¼š>0:socketæ–‡ä»¶æè¿°ç¬¦
-*             <0:åˆ›å»ºå¤±è´¥
-*   ä½œ     è€…ï¼šzhanxc
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   º¯ Êı   Ãû£ºCreateUnixClientUDPSocket
+*   ¹¦     ÄÜ£º´´½¨Unix Socket¿Í»§¶Ë
+*   ÊäÈë²ÎÊı£ºpcSockPath:PATHÎÄ¼şÂ·¾¶
+*   Êä³ö²ÎÊı£ºÎŞ
+*   ·µ »Ø Öµ£º>0:socketÎÄ¼şÃèÊö·û
+*             <0:´´½¨Ê§°Ü
+*   ×÷     Õß£ºzhanxc
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath)
 {
@@ -357,7 +357,7 @@ INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath)
         return CBL_CREATE_UNIX_CLIENT_SOCKET_PATH_VALID;  
 	}
 
-	/* åˆ›å»ºsocket */
+	/* ´´½¨socket */
 	if((iSockFd = socket(AF_UNIX, SOCK_DGRAM, 0)) < 0)
     {  
         return CBL_CREATE_UNIX_CLIENT_SOCKET_CREATE_FAILED;  
@@ -365,12 +365,12 @@ INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath)
 
 	setsockopt(iSockFd, SOL_SOCKET, SO_REUSEADDR, &iOnFlag, sizeof(iOnFlag));
 
-	/* è®¾ç½®åœ°å€ */
+	/* ÉèÖÃµØÖ· */
 	memset(&stServerAddr, 0, sizeof(stServerAddr));
 	stServerAddr.sun_family = AF_UNIX;  
 	memcpy(stServerAddr.sun_path, pcSockPath, strlen(pcSockPath) + 1);
 
-	/* è¿æ¥æœåŠ¡å™¨ç«¯ */
+	/* Á¬½Ó·şÎñÆ÷¶Ë */
     if(connect(iSockFd, (struct sockaddr*)&stServerAddr, sizeof(stServerAddr)) < 0)
     {  
         return CBL_CREATE_UNIX_CLIENT_SOCKET_CONNECT_FAILED;  

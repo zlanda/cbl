@@ -1,10 +1,10 @@
 /*******************************************************************************
-*   æ–‡  ä»¶ åï¼šSocket.h
-*   åŠŸ     èƒ½ï¼šUnix Socket IPCå¯¹å¤–æ¥å£
-*   ä½œ     è€…ï¼šzhanxc
+*   ÎÄ  ¼ş Ãû£ºSocket.h
+*   ¹¦     ÄÜ£ºUnix Socket IPC¶ÔÍâ½Ó¿Ú
+*   ×÷     Õß£ºzhanxc
 *   E-Mail   : zhanxc_chpu@sina.com
-*   åˆ›å»ºæ—¥æœŸï¼š018-7-21
-*   ä¿®æ”¹å†å²ï¼šæ— 
+*   ´´½¨ÈÕÆÚ£º018-7-21
+*   ĞŞ¸ÄÀúÊ·£ºÎŞ
 *******************************************************************************/
 
 #ifndef  _CBL_RPC_SOCKET_H_
@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-/* ç³»ç»Ÿå¤´æ–‡ä»¶ */
+/* ÏµÍ³Í·ÎÄ¼ş */
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <sys/stat.h>
@@ -22,66 +22,69 @@ extern "C" {
 #include <errno.h>
 #include <sys/un.h>
 
-/* å†…éƒ¨å¤´æ–‡ä»¶ */
+/* ÄÚ²¿Í·ÎÄ¼ş */
 #include "Types.h"
 
-/* å®šä¹‰é”™è¯¯ç  */
-/* å®šä¹‰è·¯å¾„é”™è¯¯ */
+/* ¶¨Òå´íÎóÂë */
+/* ¶¨ÒåÂ·¾¶´íÎó */
 #define CBL_CREATE_UNIX_SERVER_SOCKET_PATH_VALID		-1
 
-/* å®šä¹‰socketåˆ›å»ºå¤±è´¥ */
+/* ¶¨Òåsocket´´½¨Ê§°Ü */
 #define CBL_CREATE_UNIX_SERVER_SOCKET_CREATE_FAILED		-2
 
-/* å®šä¹‰socketéé˜»å¡æ¨¡å¼å¤±è´¥ */
+/* ¶¨Òåsocket·Ç×èÈûÄ£Ê½Ê§°Ü */
 #define CBL_CREATE_UNIX_SERVER_SOCKET_MODE_FAILED		-3
 
-/* å®šä¹‰socketç»‘å®šå¤±è´¥ */
+/* ¶¨Òåsocket°ó¶¨Ê§°Ü */
 #define CBL_CREATE_UNIX_SERVER_SOCKET_BIND_FAILED		-4
 
-/* å®šä¹‰socketç›‘å¬å¤±è´¥ */
+/* ¶¨Òåsocket¼àÌıÊ§°Ü */
 #define CBL_CREATE_UNIX_SERVER_SOCKET_LISTEN_FAILED		-5
 
-/* å®šä¹‰è·¯å¾„é”™è¯¯ */
+/* ¶¨ÒåÂ·¾¶´íÎó */
 #define CBL_CREATE_UNIX_CLIENT_SOCKET_PATH_VALID		-1
 
-/* å®šä¹‰socketåˆ›å»ºå¤±è´¥ */
+/* ¶¨Òåsocket´´½¨Ê§°Ü */
 #define CBL_CREATE_UNIX_CLIENT_SOCKET_CREATE_FAILED		-2
 
-/* å®šä¹‰socketè¿æ¥å¤±è´¥ */
+/* ¶¨ÒåsocketÁ¬½ÓÊ§°Ü */
 #define CBL_CREATE_UNIX_CLIENT_SOCKET_CONNECT_FAILED	-3
 
-/* ç­‰å¾…å®¢æˆ·ç«¯è¿æ¥å¤±è´¥ */
+/* µÈ´ı¿Í»§¶ËÁ¬½ÓÊ§°Ü */
 #define CBL_ACCEPT_FAILED								-1
 
-/* å®šä¹‰å‘é€æ¶ˆæ¯æ—¶socketæ–‡ä»¶æè¿°ç¬¦éæ³• */
+/* ¶¨Òå·¢ËÍÏûÏ¢Ê±socketÎÄ¼şÃèÊö·û·Ç·¨ */
 #define CBL_SEND_MESSAGE_MSG_SOCKET_VALID				-11111111
 
-/* å®šä¹‰å‘é€æ¶ˆæ¯æ—¶å‚æ•°éæ³• */
+/* ¶¨Òå·¢ËÍÏûÏ¢Ê±²ÎÊı·Ç·¨ */
 #define CBL_SEND_MESSAGE_MSG_PARAM_VALID				-22222222
 
-/* å®šä¹‰socketå¯¹å¤–æ¥å£ */
-/* åˆ›å»ºæœåŠ¡å™¨ç«¯socket */
+/* ¶¨Òåsocket¶ÔÍâ½Ó¿Ú */
+/* ÉèÖÃsocket fdÎª·Ç×èÈûÄ£Ê½ */
+BOOL SocketNonBlockSet(INT32 iSockFd);
+
+/* ´´½¨·şÎñÆ÷¶Ësocket */
 INT32 CreateUnixServerTCPSocket(CHAR *pcSockPath, UINT32 uiMaxConnNum);
 
-/* åˆ›å»ºå®¢æˆ·ç«¯socket */
+/* ´´½¨¿Í»§¶Ësocket */
 INT32 CreateUnixClientTCPSocket(CHAR *pcSockPath);
 
-/* ç­‰å¾…å®¢æˆ·ç«¯è¿æ¥ */
+/* µÈ´ı¿Í»§¶ËÁ¬½Ó */
 INT32 AcceptUnixSocket(INT32 iSockFd);
 
-/* å…³é—­socket */
+/* ¹Ø±Õsocket */
 VOID CloseUnixSocket(INT32 iSockFd);
 
-/* å‘é€æ¶ˆæ¯ */
+/* ·¢ËÍÏûÏ¢ */
 INT32 SendMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags);
 
-/* æ¥æ”¶æ¶ˆæ¯ */
+/* ½ÓÊÕÏûÏ¢ */
 INT32 RecvMessage(INT32 iSockFd, CHAR *pcBuffer, INT32 iBufferLen, INT32 iFlags);
 
-/* åˆ›å»ºæœåŠ¡å™¨ç«¯socket */
+/* ´´½¨·şÎñÆ÷¶Ësocket */
 INT32 CreateUnixServerUDPSocket(CHAR *pcSockPath);
 
-/* åˆ›å»ºå®¢æˆ·ç«¯socket */
+/* ´´½¨¿Í»§¶Ësocket */
 INT32 CreateUnixClientUDPSocket(CHAR *pcSockPath);
 
 #ifdef __cplusplus

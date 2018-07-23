@@ -98,27 +98,41 @@ RECV_SOCK_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
 ################################################################################
-#定义Epoll Server发送目录
+#定义Epoll Server目录
 EPOLL_SERVER := EpollServer
 EPOLL_SERVER_SRC := $(ROOT)/$(TEST)
 EPOLL_SERVER_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 
-#定义Epoll Client接收目录
+#定义Epoll Client目录
 EPOLL_CLIENT := EpollClient
 EPOLL_CLIENT_SRC := $(ROOT)/$(TEST)
 EPOLL_CLIENT_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
 ################################################################################
-#定义Select Server发送目录
+#定义Select Server目录
 SELECT_SERVER := SelectServer
 SELECT_SERVER_SRC := $(ROOT)/$(TEST)
 SELECT_SERVER_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 
-#定义Select Client接收目录
+#定义Select Client目录
 SELECT_CLIENT := SelectClient
 SELECT_CLIENT_SRC := $(ROOT)/$(TEST)
 SELECT_CLIENT_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
+################################################################################
+#定义Signal处理目录
+SIGNAL_TEST := SignalTest
+SIGNAL_TEST_SRC := $(ROOT)/$(TEST)
+SIGNAL_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
+################################################################################
+#定义Timer处理目录
+TIMER_TEST := TimerTest
+TIMER_TEST_SRC := $(ROOT)/$(TEST)
+TIMER_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
 #编译参数
@@ -127,7 +141,7 @@ CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
-	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT)
+	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST)
 ################################################################################
 
 #创建文件夹
@@ -150,6 +164,7 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(COMMON_BUILD_PATH)/Process.o \
 		$(COMMON_BUILD_PATH)/Thread.o \
 		$(COMMON_BUILD_PATH)/Lock.o \
+		$(COMMON_BUILD_PATH)/Timer.o \
 		$(RPC_BUILD_PATH)/Pipe.o \
 		$(RPC_BUILD_PATH)/Fifo.o \
 		$(RPC_BUILD_PATH)/Shmid.o \
@@ -157,6 +172,7 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(RPC_BUILD_PATH)/Msqid.o \
 		$(RPC_BUILD_PATH)/Socket.o \
 		$(RPC_BUILD_PATH)/Epoll.o \
+		$(RPC_BUILD_PATH)/Signal.o \
 		-lpthread
 
 #编译Base
@@ -170,6 +186,7 @@ $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Process.c -o $(COMMON_BUILD_PATH)/Process.o
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Thread.c -o $(COMMON_BUILD_PATH)/Thread.o
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Lock.c -o $(COMMON_BUILD_PATH)/Lock.o
+	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Timer.c -o $(COMMON_BUILD_PATH)/Timer.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Pipe.c -o $(RPC_BUILD_PATH)/Pipe.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Fifo.c -o $(RPC_BUILD_PATH)/Fifo.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Shmid.c -o $(RPC_BUILD_PATH)/Shmid.o
@@ -177,6 +194,7 @@ $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Msqid.c -o $(RPC_BUILD_PATH)/Msqid.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Socket.c -o $(RPC_BUILD_PATH)/Socket.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Epoll.c -o $(RPC_BUILD_PATH)/Epoll.o
+	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Signal.c -o $(RPC_BUILD_PATH)/Signal.o
 
 ################################################################################
 #链接Test
@@ -307,6 +325,28 @@ $(SELECT_CLIENT):	$(SELECT_CLIENT)_objs
 #编译SelectClient
 $(SELECT_CLIENT)_objs:
 	$(CC) $(CFLAGS) -c $(SELECT_CLIENT_SRC)/select_client.c -o $(SELECT_CLIENT_BUILD_PATH)/select_client.o
+################################################################################
+
+#测试Signal
+################################################################################
+#链接Signal
+$(SIGNAL_TEST):	$(SIGNAL_TEST)_objs
+	$(CC) $(CFLAGS) -o $(SIGNAL_TEST_BUILD_PATH)/$(SIGNAL_TEST) $(SIGNAL_TEST_BUILD_PATH)/signal_test.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译Signal
+$(SIGNAL_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(SIGNAL_TEST_SRC)/signal_test.c -o $(SIGNAL_TEST_BUILD_PATH)/signal_test.o
+################################################################################
+
+#测试Timer
+################################################################################
+#链接Timer
+$(TIMER_TEST):	$(TIMER_TEST)_objs
+	$(CC) $(CFLAGS) -o $(TIMER_TEST_BUILD_PATH)/$(TIMER_TEST) $(TIMER_TEST_BUILD_PATH)/timer_test.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME)
+
+#编译Timer
+$(TIMER_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(TIMER_TEST_SRC)/timer_test.c -o $(TIMER_TEST_BUILD_PATH)/timer_test.o
 ################################################################################
 
 ################################################################################
