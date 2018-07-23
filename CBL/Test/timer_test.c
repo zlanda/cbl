@@ -64,7 +64,7 @@ VOID TimerThread(union sigval unSigVal)
 #if TIMER_SIGNAL_CREATE_TEST
 VOID TimerThread(INT32 iSigNum)
 {
-	printf("timer_signal function! %d\n", iSigNum);
+	printf("TimerThread function! %d\n", iSigNum);
 }
 #endif
 
@@ -152,10 +152,32 @@ int main()
 #endif
 
 #if TIMER_SIGNAL_CREATE_TEST
-	CreateSignalTimer(2, 3, TimerThread);
+	INT32 iCnt = 0;
+	INT32 iTimerRet;
+	timer_t stTimerId;
+
+	iTimerRet = CreateSignalTimer(2, 3, &stTimerId, TimerThread);
+	printf("TimerId=%d\n", iTimerRet);
 	while (1)
 	{
+		iCnt++;
 		sleep(1);
+
+		if (iCnt == 5)
+		{
+			SetTimer(&stTimerId, 1, 6);
+		}
+
+		if (iCnt == 30)
+		{
+			CancleTimer(&stTimerId);
+		}
+
+		if (iCnt == 40)
+		{
+			DeleteTimer(&stTimerId);
+			break;
+		}
 	}
 #endif
 

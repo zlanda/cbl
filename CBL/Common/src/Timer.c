@@ -351,7 +351,7 @@ VOID CreateTimer(INT32 iStartDelay, INT32 iTimerDelay, fTimerProcessHandler fTim
 }
 
 /*******************************************************************************
-*   函 数   名：CreateTimer
+*   函 数   名：CreateSignalTimer
 *   功     能：创建定时器
 *   输入参数：iStartDelay:启动间隔iStartDelay时间后开始装载定时器
 *			  iTimerDelay:定时器间隔周期
@@ -362,7 +362,7 @@ VOID CreateTimer(INT32 iStartDelay, INT32 iTimerDelay, fTimerProcessHandler fTim
 *   创建日期：018-7-23
 *   修改历史：无
 *******************************************************************************/
-VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTimerHandler)
+INT32 CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, timer_t *pstTimerId, fSignalHandler fTimerHandler)
 {
 	// int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
 	// signum：指定的信号编号，可以指定SIGKILL和SIGSTOP以外的所有信号编号
@@ -378,10 +378,10 @@ VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTim
 	// 		void (*sa_restorer)(void);	//未用
 	// };
 	//
-	timer_t iTimerId;
 	struct sigevent stSigEvp;
-	struct itimerspec stItimer;
 	struct sigaction stSigAction;
+	struct itimerspec stItimer;
+	INT32 iTimerRet = 0;
 	
 	memset(&stSigAction, 0, sizeof(stSigAction));
 	stSigAction.sa_handler = fTimerHandler;
@@ -395,28 +395,111 @@ VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTim
 	if (sigaction(SIGUSR1, &stSigAction, NULL) == -1)
 	{
 		printf("Fail to sigaction.\n");
-		return;
+		return 0;
 	}
 
 	memset(&stSigEvp, 0, sizeof(struct sigevent));
 	stSigEvp.sigev_signo = SIGUSR1;
 	stSigEvp.sigev_notify = SIGEV_SIGNAL;
-	if (timer_create(CLOCK_REALTIME, &stSigEvp, &iTimerId) == -1)
+	iTimerRet = timer_create(CLOCK_REALTIME, &stSigEvp, pstTimerId);
+	if (iTimerRet == -1)
 	{
 		printf("Fail to timer_create.\n");
-		return;
+		return 0;
 	}
 
 	stItimer.it_interval.tv_sec = iTimerDelay;
 	stItimer.it_interval.tv_nsec = 0;
 	stItimer.it_value.tv_sec = iStartDelay;
 	stItimer.it_value.tv_nsec = 0;
-	if (timer_settime(iTimerId, 0, &stItimer, 0) == -1)
+	if (timer_settime(*pstTimerId, 0, &stItimer, 0) == -1)
+	{
+		printf("Fail to timer_settime.\n");
+		return 0;
+	}
+
+    return iTimerRet;  
+}
+
+/*******************************************************************************
+*   函 数   名：SetTimer
+*   功     能：设置定时器
+*   输入参数：iTimerId:定时器ID
+*			  iTimerInterval：定时器周期
+*   输出参数：无
+*   返 回 值：无
+*   作     者：zhanxc
+*   创建日期：018-7-23
+*   修改历史：无
+*******************************************************************************/
+VOID SetTimer(timer_t *pstTimerId, INT32 iStartInterval, INT32 iTimerInterval)
+{
+	struct itimerspec stItimer;
+	
+	stItimer.it_interval.tv_sec = iTimerInterval;
+	stItimer.it_interval.tv_nsec = 0;
+	stItimer.it_value.tv_sec = 0;
+	stItimer.it_value.tv_nsec = iStartInterval;	//必须要设置，否则不能成功修改
+	if (timer_settime(*pstTimerId, 0, &stItimer, 0) == -1)
 	{
 		printf("Fail to timer_settime.\n");
 		return;
 	}
 
+	printf("SetTimer\n");
+
     return ;  
+}
+
+
+/*******************************************************************************
+*   函 数   名：CancleTimer
+*   功     能：取消定时器
+*   输入参数：iTimerId:定时器ID
+*   输出参数：无
+*   返 回 值：无
+*   作     者：zhanxc
+*   创建日期：018-7-23
+*   修改历史：无
+*******************************************************************************/
+VOID CancleTimer(timer_t *pstTimerId)
+{
+	struct itimerspec stItimer;
+	
+	stItimer.it_interval.tv_sec = 0;
+	stItimer.it_interval.tv_nsec = 0;
+	stItimer.it_value.tv_sec = 0;
+	stItimer.it_value.tv_nsec = 0;
+	if (timer_settime(*pstTimerId, 0, &stItimer, 0) == -1)
+	{
+		printf("Fail to timer_settime.\n");
+		return;
+	}
+
+	printf("CancleTimer\n");
+
+    return ;  
+}
+
+/*******************************************************************************
+*   函 数   名：DeleteTimer
+*   功     能：销毁定时器
+*   输入参数：iTimerId:定时器ID
+*   输出参数：无
+*   返 回 值：成功返回0
+*			  失败返回-1，并设置errno
+*   作     者：zhanxc
+*   创建日期：018-7-23
+*   修改历史：无
+*******************************************************************************/
+INT32 DeleteTimer(timer_t *pstTimerId)
+{
+	INT32 iRet = 0;
+	
+	iRet = timer_delete(*pstTimerId);
+
+	printf("DeleteTimer\n");
+
+    return iRet;  
 }
 

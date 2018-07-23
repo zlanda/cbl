@@ -52,7 +52,13 @@ VOID CreateAlarmStdTimer(INT32 iSeconds, fSignalHandler fSigTimeoutHandler);
 
 VOID CreateTimer(INT32 iStartDelay, INT32 iTimerDelay, fTimerProcessHandler fTimerHandler);
 
-VOID CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, fSignalHandler fTimerHandler);
+INT32 CreateSignalTimer(INT32 iStartDelay, INT32 iTimerDelay, timer_t *pstTimerId, fSignalHandler fTimerHandler);
+
+VOID SetTimer(timer_t *pstTimerId, INT32 iStartInterval, INT32 iTimerInterval);
+
+VOID CancleTimer(timer_t *pstTimerId);
+
+INT32 DeleteTimer(timer_t *pstTimerId);
 
 #ifdef __cplusplus
 }
