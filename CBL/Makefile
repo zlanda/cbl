@@ -135,13 +135,21 @@ TIMER_TEST_SRC := $(ROOT)/$(TEST)
 TIMER_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
+################################################################################
+#定义Thread测试目录
+PTHREAD_TEST := ThreadTest
+PTHREAD_TEST_SRC := $(ROOT)/$(TEST)
+PTHREAD_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
-	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST)
+	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
+	$(PTHREAD_TEST)
 ################################################################################
 
 #创建文件夹
@@ -163,7 +171,6 @@ $(BASE_LIB):	$(BASE_LIB)_objs
 		$(BASE_BUILD_PATH)/Tree.o \
 		$(COMMON_BUILD_PATH)/Process.o \
 		$(COMMON_BUILD_PATH)/Thread.o \
-		$(COMMON_BUILD_PATH)/Lock.o \
 		$(COMMON_BUILD_PATH)/Timer.o \
 		$(RPC_BUILD_PATH)/Pipe.o \
 		$(RPC_BUILD_PATH)/Fifo.o \
@@ -185,7 +192,6 @@ $(BASE_LIB)_objs:
 	$(CC) $(CFLAGS) -fPIC -c $(BASE_SRC)/Tree.c -o $(BASE_BUILD_PATH)/Tree.o
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Process.c -o $(COMMON_BUILD_PATH)/Process.o
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Thread.c -o $(COMMON_BUILD_PATH)/Thread.o
-	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Lock.c -o $(COMMON_BUILD_PATH)/Lock.o
 	$(CC) $(CFLAGS) -fPIC -c $(COMMON_SRC)/Timer.c -o $(COMMON_BUILD_PATH)/Timer.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Pipe.c -o $(RPC_BUILD_PATH)/Pipe.o
 	$(CC) $(CFLAGS) -fPIC -c $(RPC_SRC)/Fifo.c -o $(RPC_BUILD_PATH)/Fifo.o
@@ -347,6 +353,17 @@ $(TIMER_TEST):	$(TIMER_TEST)_objs
 #编译Timer
 $(TIMER_TEST)_objs:
 	$(CC) $(CFLAGS) -c $(TIMER_TEST_SRC)/timer_test.c -o $(TIMER_TEST_BUILD_PATH)/timer_test.o
+################################################################################
+
+#测试Thread
+################################################################################
+#链接Thread
+$(PTHREAD_TEST):	$(PTHREAD_TEST)_objs
+	$(CC) $(CFLAGS) -o $(PTHREAD_TEST_BUILD_PATH)/$(PTHREAD_TEST) $(PTHREAD_TEST_BUILD_PATH)/pthread_test.o -L $(BASE_LIB_PATH) -l$(BASE_LIB_NAME) -lpthread
+
+#编译Thread
+$(PTHREAD_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(PTHREAD_TEST_SRC)/pthread_test.c -o $(PTHREAD_TEST_BUILD_PATH)/pthread_test.o
 ################################################################################
 
 ################################################################################
