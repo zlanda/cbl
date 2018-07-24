@@ -142,6 +142,13 @@ PTHREAD_TEST_SRC := $(ROOT)/$(TEST)
 PTHREAD_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
+################################################################################
+#定义内核HelloWorld模块
+HELLOWORLD_TEST := HelloWorld
+HELLOWORLD_DIR := KernelModeule/HelloWorld
+HELLOWORLD_TEST_SRC := $(ROOT)/$(HELLOWORLD_DIR)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
@@ -149,7 +156,7 @@ CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
-	$(PTHREAD_TEST)
+	$(PTHREAD_TEST) $(HELLOWORLD_TEST)
 ################################################################################
 
 #创建文件夹
@@ -366,9 +373,14 @@ $(PTHREAD_TEST)_objs:
 	$(CC) $(CFLAGS) -c $(PTHREAD_TEST_SRC)/pthread_test.c -o $(PTHREAD_TEST_BUILD_PATH)/pthread_test.o
 ################################################################################
 
+#编译内核HelloWorld模块
+$(HELLOWORLD_TEST):
+	make -C $(HELLOWORLD_TEST_SRC)
+
 ################################################################################
 #清除编译内容
 clean:
 	$(RM) $(BUILD_PATH)
+	make -C $(HELLOWORLD_TEST_SRC) clean
 
 
