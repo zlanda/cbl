@@ -149,6 +149,28 @@ HELLOWORLD_DIR := KernelModeule/HelloWorld
 HELLOWORLD_TEST_SRC := $(ROOT)/$(HELLOWORLD_DIR)
 ################################################################################
 
+################################################################################
+#定义内核Cdev模块
+CDEV_MODULE := Cdev
+CDEV_MODULE_DIR := KernelModeule/$(CDEV_MODULE)
+CDEV_MODULE_SRC := $(ROOT)/$(CDEV_MODULE_DIR)
+#定义内核Cdev测试目录
+CDEV_TEST := CdevTest
+CDEV_TEST_SRC := $(ROOT)/KernelTest
+CDEV_TEST_BUILD_PATH := $(BUILD_PATH)/KernelTest
+################################################################################
+
+################################################################################
+#定义内核IoctlTest模块
+IOCTLTEST_MODULE := IoctlTest
+IOCTLTEST_MODULE_DIR := KernelModeule/$(IOCTLTEST_MODULE)
+IOCTLTEST_MODULE_SRC := $(ROOT)/$(IOCTLTEST_MODULE_DIR)
+#定义内核Cdev测试目录
+IOCTLTEST_TEST := IoctlAppTest
+IOCTLTEST_TEST_SRC := $(ROOT)/KernelTest
+IOCTLTEST_TEST_BUILD_PATH := $(BUILD_PATH)/KernelTest
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
@@ -156,7 +178,7 @@ CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
-	$(PTHREAD_TEST) $(HELLOWORLD_TEST)
+	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE)
 ################################################################################
 
 #创建文件夹
@@ -165,7 +187,8 @@ $(MKDIR):
 	$(ROOT)/$(BASE_BUILD_PATH)		\
 	$(ROOT)/$(RPC_BUILD_PATH)		\
 	$(ROOT)/$(COMMON_BUILD_PATH)		\
-	$(ROOT)/$(TEST_BUILD_PATH)
+	$(ROOT)/$(TEST_BUILD_PATH)			\
+	$(ROOT)/$(CDEV_TEST_BUILD_PATH)
 
 ################################################################################
 #链接Base库
@@ -373,14 +396,52 @@ $(PTHREAD_TEST)_objs:
 	$(CC) $(CFLAGS) -c $(PTHREAD_TEST_SRC)/pthread_test.c -o $(PTHREAD_TEST_BUILD_PATH)/pthread_test.o
 ################################################################################
 
+################################################################################
+#链接CdevTest
+$(CDEV_TEST):	$(CDEV_TEST)_objs
+	$(CC) $(CFLAGS) -o $(CDEV_TEST_BUILD_PATH)/$(CDEV_TEST) $(CDEV_TEST_BUILD_PATH)/CdevTest.o -L $(CDEV_TEST_BUILD_PATH) -l$(BASE_LIB_NAME)
+
+#编译CdevTest
+$(CDEV_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(CDEV_TEST_SRC)/CdevTest.c -o $(CDEV_TEST_BUILD_PATH)/CdevTest.o
+################################################################################
+
+################################################################################
+#链接IoctlTest
+$(IOCTLTEST_TEST):	$(IOCTLTEST_TEST)_objs
+	$(CC) $(CFLAGS) -o $(IOCTLTEST_TEST_BUILD_PATH)/$(IOCTLTEST_TEST) $(IOCTLTEST_TEST_BUILD_PATH)/IoctlTest.o -L $(CDEV_TEST_BUILD_PATH) -l$(BASE_LIB_NAME)
+
+#编译IoctlTest
+$(IOCTLTEST_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(IOCTLTEST_TEST_SRC)/IoctlTest.c -o $(IOCTLTEST_TEST_BUILD_PATH)/IoctlTest.o
+################################################################################
+
+################################################################################
 #编译内核HelloWorld模块
 $(HELLOWORLD_TEST):
 	make -C $(HELLOWORLD_TEST_SRC)
+################################################################################
 
 ################################################################################
+#编译内核Cdev模块
+$(CDEV_MODULE):
+	make -C $(CDEV_MODULE_SRC)
+################################################################################
+
+################################################################################
+#编译内核IoctlTest模块
+$(IOCTLTEST_MODULE):
+	make -C $(IOCTLTEST_MODULE_SRC)
+################################################################################
+
 #清除编译内容
 clean:
 	$(RM) $(BUILD_PATH)
+	#清空HelloWorld内核模块
 	make -C $(HELLOWORLD_TEST_SRC) clean
+	#清空Cdev内核模块
+	make -C $(CDEV_MODULE_SRC) clean
+	#清空IoctlTest内核模块
+	make -C $(IOCTLTEST_MODULE_SRC) clean
 
 
