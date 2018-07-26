@@ -39,24 +39,129 @@
    可以通过top -p 线程号 命令来查看线程（包括内核线程）的CPU利用率。
 
 *******************************************************************************/
-
 #include <linux/init.h>
 #include <linux/module.h>
+#include <linux/kthread.h>
+#include <linux/delay.h>
 
-static int kthread_test_init(void) 
+#define KTHREAD_RUN_TEST							1
+#define KTHREAD_CREATE_TEST							0
+
+#if KTHREAD_RUN_TEST
+
+static struct task_struct *tsk;
+static int param_data;
+
+static int thread_function(void *data)
 {
-    printk(KERN_INFO "hello world!\n");
+    int time_count = 0;
+    int thread_data = *((int *)data);
 
-    return 0;
+    /*
+		kthread_should_stop()返回should_stop标志。它用于创建的线程检查结束标志，并决定
+		是否退出。线程完全可以在完成自己的工作后主动结束，不需等待should_stop标志。
+    */
+    while (1) 
+    {
+        printk(KERN_INFO "thread_function: %d times data: %d", time_count, thread_data);
+        /*
+			void ndelay(unsigned long nsecs);         纳秒级：1/10^-10
+			void udelay(unsigned long usecs);         微秒级: 1/10^-6
+			void mdelay(unsigned long msecs);         毫秒级：1/10^-3
+
+			msleep：睡眠之后不可唤醒；
+			msleep_interuptible：睡眠之后可唤醒；
+			ssleep：s延时，睡眠时候不可唤醒；
+
+			虽然msleep和mdelay都有延迟的作用，但他们是有区别的．
+			mdeday还忙等待函数（相当于for循环），在延迟过程中无法运行其他任务．
+			这个延迟的时间是准确的．是需要等待多少时间就会真正等待多少时间．
+			而msleep是休眠函数，它不涉及忙等待．你如果是msleep(10)，那实际上延迟的时间，
+			大部分时候是要多于10ms的，是个不定的时间值．
+
+			udelay(); mdelay(); ndelay();实现的原理本质上都是忙等待，ndelay和mdelay
+			都是通过udelay衍生出来的
+			udelay一般适用于一个比较小的delay，如果你填的数大于2000，系统会认为你这个
+			是一个错误的delay函数，因此如果需要2ms以上的delay需要使用mdelay函数。
+
+			由于这些delay函数本质上都是忙等待，对于长时间的忙等待意味这无谓的耗费着cpu的
+			资源，因此对于毫秒级的延时，内核提供了msleep，ssleep等函数，这些函数将使得调用
+			它的进程睡眠参数指定的时间。
+        */
+
+        if (kthread_should_stop())
+        {
+			break;
+        }
+
+		/* 条件为真，进行业务处理，条件为假，休眠让出CPU，不退出的原因在于
+		   kthread_stop()时由于线程已经退出而引发oops内核异常 */
+        if (time_count <= 30)
+        {
+        	time_count++;
+			msleep(1000);
+        }
+        else
+        {
+        	/* 线程不退出继续运行 */
+        	msleep(5000);
+        }
+    };
+    
+    return time_count;  
 }
 
-static int kthread_test_exit(void) 
+static int kthreadrun_test_init(void) 
 {
-    printk(KERN_INFO "see you.\n");
+	printk(KERN_INFO "Hello, world!\n");
 
-    return 0;
+	/*
+		struct task_struct kthread_run(int (*threadfn)(void *data), void *data, const char namefmt[],...);
+		kthread_run()负责内核线程的创建，参数包括入口函数threadfn，参数data，线程名称namefmt。
+		可以看到线程的名字可以是类似sprintf方式组成的字符串。
+		
+	*/
+	param_data = 10;
+	tsk = kthread_run(thread_function, &param_data, "mythread%d", 1);
+	if (IS_ERR(tsk)) 
+	{
+		printk(KERN_INFO "create kthread failed!\n");
+	}
+	else 
+	{
+		printk(KERN_INFO "create ktrhead ok!\n");
+	}
+	
+	return 0;
 }
 
-module_init(kthread_test_init);
-module_exit(kthread_test_exit);
+static void kthreadrun_test_exit(void) 
+{
+	int ret;
+	
+	printk(KERN_INFO "Hello, exit!\n");
+	if (!IS_ERR(tsk))
+	{
+		/*
+			kthread_stop()负责结束创建的线程，参数是创建时返回的task_struct指针。
+			kthread设置标志should_stop，并等待线程主动结束，返回线程的返回值。线程
+			可能在kthread_stop()调用前就结束。（经过实际验证，如果线程在kthread_stop()
+			调用之前就结束，之后kthread_stop()再调用会发生可怕地事情—调用kthread_stop()
+			的进程crash！！之所以如此，是由于kthread实现上的弊端）
+		*/
+		ret = kthread_stop(tsk);
+		printk(KERN_INFO "thread function has run %ds\n", ret);
+	}
 
+	return;
+}
+
+MODULE_LICENSE("GPL");  
+module_init(kthreadrun_test_init);
+module_exit(kthreadrun_test_exit);
+
+#endif
+
+#if KTHREAD_CREATE_TEST
+
+#endif
