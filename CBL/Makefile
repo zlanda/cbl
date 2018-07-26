@@ -171,6 +171,13 @@ IOCTLTEST_TEST_SRC := $(ROOT)/KernelTest
 IOCTLTEST_TEST_BUILD_PATH := $(BUILD_PATH)/KernelTest
 ################################################################################
 
+################################################################################
+#定义内核KthreadTest模块
+KTHREAD_TEST := KthreadTest
+KTHREAD_DIR := KernelModeule/Kthread
+KTHREAD_TEST_SRC := $(ROOT)/$(KTHREAD_DIR)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
@@ -178,7 +185,8 @@ CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
-	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE)
+	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE) \
+	$(KTHREAD_TEST)
 ################################################################################
 
 #创建文件夹
@@ -434,6 +442,12 @@ $(IOCTLTEST_MODULE):
 	make -C $(IOCTLTEST_MODULE_SRC)
 ################################################################################
 
+################################################################################
+#编译内核KthreadTest模块
+$(KTHREAD_TEST):
+	make -C $(KTHREAD_TEST_SRC)
+################################################################################
+
 #清除编译内容
 clean:
 	$(RM) $(BUILD_PATH)
@@ -443,5 +457,6 @@ clean:
 	make -C $(CDEV_MODULE_SRC) clean
 	#清空IoctlTest内核模块
 	make -C $(IOCTLTEST_MODULE_SRC) clean
-
+	#清空KthreadTest内核模块
+	make -C $(KTHREAD_TEST_SRC) clean
 

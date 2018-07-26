@@ -22,7 +22,10 @@
 #include <asm/uaccess.h>
 #include "IoctlTest.h"
 #include "IoctlProc.h"
-//#include "IoctlSysfs.h"
+#include "IoctlSysfs.h"
+#include "Timer.h"
+#include "Workqueue.h"
+#include "Tasklet.h"
 
 static int mem_major = MEMDEV_MAJOR;
 
@@ -381,10 +384,23 @@ static int memdev_init(void)
     printk("memdev create succ.\r\n");
 
     //创建proc文件
-    //ioctlproc_init();
+    ioctlproc_init();
 
     //创建sysfs文件
-    //nuht_sysfs_init();
+    nuht_sysfs_init();
+
+#if 0
+    //创建定时器
+    clk_init();
+#endif
+
+#if 0
+    //启动工作队列
+    wq_init();
+#endif
+
+    //启动tasklet
+    tasklet_demo_init();
     
     printk("memdev_init succ.\r\n");
 
@@ -403,8 +419,21 @@ static void memdev_exit(void)
 {
     int i = 0;
 
-    //ioctlproc_exit();
-    //nuht_sysfs_exit();
+#if 0
+    //定时器销毁
+    clk_exit();
+#endif
+
+#if 0
+    //销毁工作队列
+    wq_exit();
+#endif
+
+    //tasklet退出
+    tasklet_demo_exit();
+
+    ioctlproc_exit();
+    nuht_sysfs_exit();
     
     dev_t deviceno = 0;
     for (i = 0; i < MEMDEV_NR_DEVS; i++)
