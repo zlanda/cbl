@@ -1,8 +1,6 @@
 #这是多个源文件编译成内核模块的统一书写方法
 ifneq  ($(KERNELRELEASE),)
-#	obj-m += kthread.o
-#	systest-objs := KthreadTest.o
-	obj-m += AtomicTest.o
+	obj-m += AtomicTest.o SemTest.o
 else
 	KDIR := /lib/modules/$(shell uname -r)/build
 	PWD:=$(shell pwd)

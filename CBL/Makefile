@@ -186,10 +186,10 @@ NOTIFIER_TEST_SRC := $(ROOT)/$(NOTIFIER_DIR)
 ################################################################################
 
 ################################################################################
-#定义内核AtomicTest模块
-ATOMICLOCK_TEST := AtomicTest
-ATOMICLOCK_DIR := KernelModeule/Lock/AtomicTest
-ATOMICLOCK_TEST_SRC := $(ROOT)/$(ATOMICLOCK_DIR)
+#定义内核LockTest模块
+LOCK_TEST := LockTest
+LOCK_DIR := KernelModeule/Lock
+LOCK_TEST_SRC := $(ROOT)/$(LOCK_DIR)
 ################################################################################
 
 #编译参数
@@ -200,7 +200,7 @@ all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CR
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
 	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE) \
-	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(ATOMICLOCK_TEST)
+	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(LOCK_TEST)
 ################################################################################
 
 #创建文件夹
@@ -470,8 +470,8 @@ $(NOTIFIER_TEST):
 
 ################################################################################
 #编译内核AtomicTest模块
-$(ATOMICLOCK_TEST):
-	make -C $(ATOMICLOCK_TEST_SRC)
+$(LOCK_TEST):
+	make -C $(LOCK_TEST_SRC)
 ################################################################################
 
 #清除编译内容
@@ -487,6 +487,6 @@ clean:
 	make -C $(KTHREAD_TEST_SRC) clean
 	#清空NotifierTest内核模块
 	make -C $(NOTIFIER_TEST_SRC) clean
-	#清空AtomicTest内核模块
-	make -C $(ATOMICLOCK_TEST_SRC) clean
+	#清空LockTest内核模块
+	make -C $(LOCK_TEST_SRC) clean
 
