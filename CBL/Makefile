@@ -178,6 +178,20 @@ KTHREAD_DIR := KernelModeule/Kthread
 KTHREAD_TEST_SRC := $(ROOT)/$(KTHREAD_DIR)
 ################################################################################
 
+################################################################################
+#定义内核NotifierTest模块
+NOTIFIER_TEST := NotifierTest
+NOTIFIER_DIR := KernelModeule/NotifierChain
+NOTIFIER_TEST_SRC := $(ROOT)/$(NOTIFIER_DIR)
+################################################################################
+
+################################################################################
+#定义内核AtomicTest模块
+ATOMICLOCK_TEST := AtomicTest
+ATOMICLOCK_DIR := KernelModeule/Lock/AtomicTest
+ATOMICLOCK_TEST_SRC := $(ROOT)/$(ATOMICLOCK_DIR)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
@@ -186,7 +200,7 @@ all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CR
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
 	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE) \
-	$(KTHREAD_TEST)
+	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(ATOMICLOCK_TEST)
 ################################################################################
 
 #创建文件夹
@@ -448,6 +462,18 @@ $(KTHREAD_TEST):
 	make -C $(KTHREAD_TEST_SRC)
 ################################################################################
 
+################################################################################
+#编译内核NotifierTest模块
+$(NOTIFIER_TEST):
+	make -C $(NOTIFIER_TEST_SRC)
+################################################################################
+
+################################################################################
+#编译内核AtomicTest模块
+$(ATOMICLOCK_TEST):
+	make -C $(ATOMICLOCK_TEST_SRC)
+################################################################################
+
 #清除编译内容
 clean:
 	$(RM) $(BUILD_PATH)
@@ -459,4 +485,8 @@ clean:
 	make -C $(IOCTLTEST_MODULE_SRC) clean
 	#清空KthreadTest内核模块
 	make -C $(KTHREAD_TEST_SRC) clean
+	#清空NotifierTest内核模块
+	make -C $(NOTIFIER_TEST_SRC) clean
+	#清空AtomicTest内核模块
+	make -C $(ATOMICLOCK_TEST_SRC) clean
 

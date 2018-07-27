@@ -41,11 +41,13 @@
 *******************************************************************************/
 #include <linux/init.h>
 #include <linux/module.h>
-#include <linux/kthread.h>
+#include <linux/kthread.h>      //kthread_create()、kthread_run()
 #include <linux/delay.h>
+#include <linux/sched.h>        //wake_up_process()
+#include <linux/err.h>
 
-#define KTHREAD_RUN_TEST							1
-#define KTHREAD_CREATE_TEST							0
+#define KTHREAD_RUN_TEST							0
+#define KTHREAD_CREATE_TEST							1
 
 #if KTHREAD_RUN_TEST
 
@@ -63,7 +65,7 @@ static int thread_function(void *data)
     */
     while (1) 
     {
-        printk(KERN_INFO "thread_function: %d times data: %d", time_count, thread_data);
+        printk(KERN_INFO "thread_function: %d times data: %d\r\n", time_count, thread_data);
         /*
 			void ndelay(unsigned long nsecs);         纳秒级：1/10^-10
 			void udelay(unsigned long usecs);         微秒级: 1/10^-6
@@ -88,6 +90,7 @@ static int thread_function(void *data)
 			资源，因此对于毫秒级的延时，内核提供了msleep，ssleep等函数，这些函数将使得调用
 			它的进程睡眠参数指定的时间。
         */
+        set_current_state(TASK_UNINTERRUPTIBLE);
 
         if (kthread_should_stop())
         {
@@ -104,7 +107,13 @@ static int thread_function(void *data)
         else
         {
         	/* 线程不退出继续运行 */
-        	msleep(5000);
+        	//msleep(5000);
+
+        	time_count += 5;
+
+        	printk("The thread is about to enter the dormant state. time_count: %d\r\n", time_count);
+
+        	schedule_timeout(5 * HZ);
         }
     };
     
@@ -113,7 +122,7 @@ static int thread_function(void *data)
 
 static int kthreadrun_test_init(void) 
 {
-	printk(KERN_INFO "Hello, world!\n");
+	printk(KERN_INFO "kthreadrun_test_init.\n");
 
 	/*
 		struct task_struct kthread_run(int (*threadfn)(void *data), void *data, const char namefmt[],...);
@@ -139,7 +148,7 @@ static void kthreadrun_test_exit(void)
 {
 	int ret;
 	
-	printk(KERN_INFO "Hello, exit!\n");
+	printk(KERN_INFO "kthreadrun_test_exit.\n");
 	if (!IS_ERR(tsk))
 	{
 		/*
@@ -163,5 +172,108 @@ module_exit(kthreadrun_test_exit);
 #endif
 
 #if KTHREAD_CREATE_TEST
+static struct task_struct *task;
+static int create_param_data;
+
+static int threadcreate_function(void *data)
+{
+    int time_count = 0;
+    int thread_data = *((int *)data);
+
+    /*
+		kthread_should_stop()返回should_stop标志。它用于创建的线程检查结束标志，并决定
+		是否退出。线程完全可以在完成自己的工作后主动结束，不需等待should_stop标志。
+    */
+    while (1) 
+    {
+        printk(KERN_INFO "threadcreate_function: %d times data: %d\r\n", time_count, thread_data);
+
+        set_current_state(TASK_UNINTERRUPTIBLE);
+
+        if (kthread_should_stop())
+        {
+			break;
+        }
+
+		/* 条件为真，进行业务处理，条件为假，休眠让出CPU，不退出的原因在于
+		   kthread_stop()时由于线程已经退出而引发oops内核异常 */
+        if (time_count <= 30)
+        {
+        	time_count++;
+			msleep(1000);
+        }
+        else
+        {
+        	/* 线程不退出继续运行 */
+        	//msleep(5000);
+
+        	time_count += 5;
+
+        	printk("The thread is about to enter the dormant state. time_count: %d\r\n", time_count);
+
+        	schedule_timeout(5 * HZ);
+        }
+    };
+    
+    return time_count;  
+}
+
+static int kthreadcreate_test_init(void) 
+{
+    int err;
+    
+	printk(KERN_INFO "kthreadcreate_test_init.\n");
+
+	/*
+		struct task_struct *kthread_create(int (*threadfn)(void *data),void *data,const char *namefmt, ...);
+		kthread_create()创建内核线程，参数格式与kthread_run一致。
+		区别在于kthread_create()创建内核线程后，不会马上运行，而是需要将kthread_create()返回
+		的task_struct指针传给wake_up_process()，软后通过此函数运行线程。		
+	*/
+	create_param_data = 10;
+	task = kthread_create(threadcreate_function, &create_param_data, "mythread%d", 1);
+	if (IS_ERR(task)) 
+	{
+		printk(KERN_INFO "create kthread failed!\n");
+		err = PTR_ERR(task);
+		task = NULL;
+		return err;
+	}
+	else 
+	{
+		printk(KERN_INFO "create ktrhead ok!\n");
+	}
+
+    //触发内核线程运行
+	wake_up_process(task);
+	
+	return 0;
+}
+
+static void kthreadcreate_test_exit(void) 
+{
+	int ret;
+	
+	printk(KERN_INFO "kthreadcreate_test_exit.\n");
+	if (!IS_ERR(task))
+	{
+		/*
+			kthread_stop()负责结束创建的线程，参数是创建时返回的task_struct指针。
+			kthread设置标志should_stop，并等待线程主动结束，返回线程的返回值。线程
+			可能在kthread_stop()调用前就结束。（经过实际验证，如果线程在kthread_stop()
+			调用之前就结束，之后kthread_stop()再调用会发生可怕地事情—调用kthread_stop()
+			的进程crash！！之所以如此，是由于kthread实现上的弊端）
+		*/
+		ret = kthread_stop(task);
+		printk(KERN_INFO "thread function has run %ds\n", ret);
+		task = NULL;
+	}
+
+	return;
+}
+
+MODULE_LICENSE("GPL");  
+module_init(kthreadcreate_test_init);
+module_exit(kthreadcreate_test_exit);
 
 #endif
