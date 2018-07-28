@@ -225,6 +225,7 @@
 #include <linux/kthread.h>
 #include <linux/sched.h>
 #include <linux/semaphore.h>
+#include <linux/spinlock.h>
 
 static int foo;
 static spinlock_t foo_lock;
