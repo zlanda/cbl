@@ -220,7 +220,7 @@ static int rwsemtest_init(void)
 		printk(KERN_INFO "create ktrhead tsk2 ok!\n");
 	}
 	
-	tsk3 = kthread_run(thread_one, NULL, "mythread%d", 3);
+	tsk3 = kthread_run(thread_third, NULL, "mythread%d", 3);
 	if (IS_ERR(tsk3)) 
 	{
 		printk(KERN_INFO "create kthread tsk3 failed!\n");

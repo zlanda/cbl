@@ -42,6 +42,50 @@
     可以保证退出信息结构存储区域的有效性。
 *******************************************************************************/
 
+/*******************************************************************************
+	自旋锁使用注意事项:
+	1、自旋锁一种忙等待，当条件不满足时，会一直不断的循环判断条件是否满足，如果满足
+		就解锁，运行之后的代码。因此会对linux的系统的性能有些影响。所以在实际编程时，
+		需要注意自旋锁不应该长时间的持有。它适合于短时间的的轻量级的加锁机制。
+	2、自旋锁不能递归使用，这是因为自旋锁，在设计之初就被设计成在不同进程或者函数之
+		间同步。所以不能用于递归使用。
+
+	POSIX threads(简称Pthreads)是在多核平台上进行并行编程的一套常用的API。线程同步
+	(Thread Synchronization)是并行编程中非常重要的通讯手段，其中最典型的应用就是用
+	Pthreads提供的锁机制(lock)来对多个线程之间共享的临界区(Critical Section)进行保
+	护(另一种常用的同步机制是barrier)。
+		Pthreads提供了多种锁机制：
+		(1) Mutex（互斥量）：pthread_mutex_***
+		(2) Spin lock（自旋锁）：pthread_spin_***
+		(3) Condition Variable（条件变量）：pthread_con_***
+		(4) Read/Write lock（读写锁）：pthread_rwlock_***
+	
+	Pthreads提供的Mutex锁操作相关的API主要有：
+	pthread_mutex_lock (pthread_mutex_t *mutex);
+	pthread_mutex_trylock (pthread_mutex_t *mutex);
+	pthread_mutex_unlock (pthread_mutex_t *mutex);
+
+	Pthreads提供的与Spin Lock锁操作相关的API主要有：
+	pthread_spin_lock (pthread_spinlock_t *lock);
+	pthread_spin_trylock (pthread_spinlock_t *lock);
+	pthread_spin_unlock (pthread_spinlock_t *lock);
+
+	从实现原理上来讲，Mutex属于sleep-waiting类型的锁。例如在一个双核的机器上有两个线
+程(线程A和线程B)，它们分别运行在Core0和 Core1上。假设线程A想要通过pthread_mutex_lock
+操作去得到一个临界区的锁，而此时这个锁正被线程B所持有，那么线程A就会被阻塞 (blocking)，
+Core0 会在此时进行上下文切换(Context Switch)将线程A置于等待队列中，此时Core0就可以运
+行其他的任务(例如另一个线程C)而不必进行忙等待。而Spin lock则不然，它属于busy-waiting
+类型的锁，如果线程A是使用pthread_spin_lock操作去请求锁，那么线程A就会一直在 Core0上进
+行忙等待并不停的进行锁请求，直到得到这个锁为止。
+
+	自旋锁相关API：
+	1 int pthread_spin_destroy(pthread_spinlock_t *);
+	2 int pthread_spin_init(pthread_spinlock_t *, int);
+	3 int pthread_spin_lock(pthread_spinlock_t *);
+	4 int pthread_spin_trylock(pthread_spinlock_t *);
+	5 int pthread_spin_unlock(pthread_spinlock_t *);
+*******************************************************************************/
+
 #include "Thread.h"
 
 /*******************************************************************************
