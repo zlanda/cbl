@@ -89,6 +89,66 @@ CPU数。写者是排他性的，一个读写锁同时只能有一个写者或�
 	
 *******************************************************************************/
 
+/*******************************************************************************
+						大读者锁（brlock-Big Reader Lock）
+	大读者锁是读写锁的高性能版，读者可以非常快地获得锁，但写者获得锁的开销比较大。
+大读者锁只存在于2.4内核中，在2.6中已经没有这种锁（提醒读者特别注意）。它们的使用
+与读写锁的使用类似，只是所有的大读者锁都是事先已经定义好的。这种锁适合于读多写少
+的情况，它在这种情况下远好于读写锁。 
+	大读者锁的实现机制是：每一个大读者锁在所有CPU上都有一个本地读者写者锁，一个读者
+仅需要获得本地CPU的读者锁，而写者必须获得所有CPU上的锁。
+
+	大读者锁API：
+	大读者锁的API非常类似于读写锁，只是锁变量为预定义的锁ID。
+	1、void br_read_lock (enum brlock_indices idx);
+		读者使用该函数来获得大读者锁idx，在2.4内核中，预定义的idx允许的值有两个：
+	BR_GLOBALIRQ_LOCK和BR_NETPROTO_LOCK，当然，用户可以添加自己定义的大读者锁ID 。
+	2、void br_read_unlock (enum brlock_indices idx);
+		读者使用该函数释放大读者锁idx。
+	3、void br_write_lock (enum brlock_indices idx);
+		写者使用它来获得大读者锁idx。
+	4、void br_write_unlock (enum brlock_indices idx);
+		写者使用它来释放大读者锁idx。
+	5、br_read_lock_irqsave(idx, flags)
+		读者也可以使用该宏来获得大读者锁idx，与br_read_lock不同的是，该宏还同时
+	把寄存器的值保存到变量flags中，并且失效本地中断。
+	6、br_read_lock_irq(idx)
+		读者也可以使用该宏来获得大读者锁idx，与br_read_lock不同的是，该宏还同时
+	失效本地中断。与br_read_lock_irqsave不同的是，该宏不保存标志寄存器。
+	7、br_read_lock_bh(idx)
+		读者也可以使用该宏来获得大读者锁idx，与br_read_lock不同的是，该宏还同时
+	失效本地软中断。
+	8、br_write_lock_irqsave(idx, flags)
+		写者也可以使用该宏来获得大读者锁idx，与br_write_lock不同的是，该宏还同时
+	把寄存器的值保存到变量flags中，并且失效本地中断。
+	9、br_write_lock_irq(idx)
+		写者也可以使用该宏来获得大读者锁idx，与br_write_lock不同的是，该宏还同时
+	失效本地中断。与br_write_lock_irqsave不同的是，该宏不保存标志寄存器。
+	10、br_write_lock_bh(idx)
+		写者也可以使用该宏来获得大读者锁idx，与br_write_lock不同的是，该宏还同时
+	失效本地软中断。
+	11、br_read_unlock_irqrestore(idx, flags)
+		读者也使用该宏来释放大读者锁idx，它与br_read_unlock不同之处是，该宏还同时
+	把变量flags的值恢复到标志寄存器。
+	12、br_read_unlock_irq(idx)
+		读者也使用该宏来释放大读者锁idx，它与br_read_unlock不同之处是，该宏还同时
+	使能本地中断。
+	13、br_read_unlock_bh(idx)
+		读者也使用该宏来释放大读者锁idx，它与br_read_unlock不同之处是，该宏还同时
+	使能本地软中断。
+	14、br_write_unlock_irqrestore(idx, flags)
+		写者也使用该宏来释放大读者锁idx，它与br_write_unlock不同之处是，该宏还同时
+	把变量flags的值恢复到标志寄存器。
+	15、br_write_unlock_irq(idx)
+		写者也使用该宏来释放大读者锁idx，它与br_write_unlock不同之处是，该宏还同时
+	使能本地中断。
+	16、br_write_unlock_bh(idx)
+		写者也使用该宏来释放大读者锁idx，它与br_write_unlock不同之处是，该宏还同时
+	使能本地软中断。 
+
+	这些API的使用与读写锁完全一致。
+*******************************************************************************/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kthread.h>
