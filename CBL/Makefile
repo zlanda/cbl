@@ -44,6 +44,10 @@ TEST := Test
 TEST_SRC := $(ROOT)/$(TEST)
 TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 
+#定义Socket目录
+SOCKET_BUILD_PATH := $(BUILD_PATH)/Socket
+SOCKETTEST_BUILD_PATH := $(BUILD_PATH)/SocketTest
+
 ################################################################################
 #定义创建FIFO目录
 CREATE_FIFO := CreateFifo
@@ -143,6 +147,34 @@ PTHREAD_TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 ################################################################################
 
 ################################################################################
+#定义TcpServer测试目录
+TCPSERVER_TEST := TcpServer
+TCPSERVER_TEST_SRC := $(ROOT)/Socket
+TCPSERVER_TEST_BUILD_PATH := $(BUILD_PATH)/Socket
+################################################################################
+
+################################################################################
+#定义TcpClient测试目录
+TCPCLIENT_TEST := TcpClient
+TCPCLIENT_TEST_SRC := $(ROOT)/SocketTest
+TCPCLIENT_TEST_BUILD_PATH := $(BUILD_PATH)/SocketTest
+################################################################################
+
+################################################################################
+#定义UdpServer测试目录
+UDPSERVER_TEST := UdpServer
+UDPSERVER_TEST_SRC := $(ROOT)/Socket
+UDPSERVER_TEST_BUILD_PATH := $(BUILD_PATH)/Socket
+################################################################################
+
+################################################################################
+#定义UdpClient测试目录
+UDPCLIENT_TEST := UdpClient
+UDPCLIENT_TEST_SRC := $(ROOT)/SocketTest
+UDPCLIENT_TEST_BUILD_PATH := $(BUILD_PATH)/SocketTest
+################################################################################
+
+################################################################################
 #定义内核HelloWorld模块
 HELLOWORLD_TEST := HelloWorld
 HELLOWORLD_DIR := KernelModeule/HelloWorld
@@ -198,6 +230,7 @@ CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
+	$(TCPSERVER_TEST) $(TCPCLIENT_TEST) $(UDPSERVER_TEST) $(UDPCLIENT_TEST) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
 	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE) \
 	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(LOCK_TEST)
@@ -209,6 +242,8 @@ $(MKDIR):
 	$(ROOT)/$(BASE_BUILD_PATH)		\
 	$(ROOT)/$(RPC_BUILD_PATH)		\
 	$(ROOT)/$(COMMON_BUILD_PATH)		\
+	$(ROOT)/$(SOCKET_BUILD_PATH)		\
+	$(ROOT)/$(SOCKETTEST_BUILD_PATH)	\
 	$(ROOT)/$(TEST_BUILD_PATH)			\
 	$(ROOT)/$(CDEV_TEST_BUILD_PATH)
 
@@ -416,6 +451,50 @@ $(PTHREAD_TEST):	$(PTHREAD_TEST)_objs
 #编译Thread
 $(PTHREAD_TEST)_objs:
 	$(CC) $(CFLAGS) -c $(PTHREAD_TEST_SRC)/pthread_test.c -o $(PTHREAD_TEST_BUILD_PATH)/pthread_test.o
+################################################################################
+
+#测试TcpServer
+################################################################################
+#链接TcpServer
+$(TCPSERVER_TEST):	$(TCPSERVER_TEST)_objs
+	$(CC) $(CFLAGS) -o $(TCPSERVER_TEST_BUILD_PATH)/$(TCPSERVER_TEST) $(TCPSERVER_TEST_BUILD_PATH)/TcpServer.o
+
+#编译TcpServer
+$(TCPSERVER_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(TCPSERVER_TEST_SRC)/TcpServer.c -o $(TCPSERVER_TEST_BUILD_PATH)/TcpServer.o
+################################################################################
+
+#测试TcpClient
+################################################################################
+#链接TcpClient
+$(TCPCLIENT_TEST):	$(TCPCLIENT_TEST)_objs
+	$(CC) $(CFLAGS) -o $(TCPCLIENT_TEST_BUILD_PATH)/$(TCPCLIENT_TEST) $(TCPCLIENT_TEST_BUILD_PATH)/TcpClient.o
+
+#编译TcpClient
+$(TCPCLIENT_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(TCPCLIENT_TEST_SRC)/TcpClient.c -o $(TCPCLIENT_TEST_BUILD_PATH)/TcpClient.o
+################################################################################
+
+#测试UdpServer
+################################################################################
+#链接UdpServer
+$(UDPSERVER_TEST):	$(UDPSERVER_TEST)_objs
+	$(CC) $(CFLAGS) -o $(UDPSERVER_TEST_BUILD_PATH)/$(UDPSERVER_TEST) $(UDPSERVER_TEST_BUILD_PATH)/UdpServer.o
+
+#编译UdpServer
+$(UDPSERVER_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(UDPSERVER_TEST_SRC)/UdpServer.c -o $(UDPSERVER_TEST_BUILD_PATH)/UdpServer.o
+################################################################################
+
+#测试UdpClient
+################################################################################
+#链接UdpClient
+$(UDPCLIENT_TEST):	$(UDPCLIENT_TEST)_objs
+	$(CC) $(CFLAGS) -o $(UDPCLIENT_TEST_BUILD_PATH)/$(UDPCLIENT_TEST) $(UDPCLIENT_TEST_BUILD_PATH)/UdpClient.o
+
+#编译UdpClient
+$(UDPCLIENT_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(UDPCLIENT_TEST_SRC)/UdpClient.c -o $(UDPCLIENT_TEST_BUILD_PATH)/UdpClient.o
 ################################################################################
 
 ################################################################################
