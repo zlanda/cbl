@@ -5,20 +5,14 @@ BASE_LIB_NAME := Basecbl
 #Makefile中用到的命令
 MKDIR := mkdir
 RM := rm -rf
-
-#命令
-CC := gcc
-CK := g++
-LD := ld
-OC := objcopy
-OD := objdump
-DD := dd
-ELF := readelf
+CD := cd
 
 #定义编译根目录位置
 ROOT := .
-
 BUILD_PATH := $(ROOT)/build
+
+#包含编译环境脚本文件
+include $(ROOT)/Env.sh
 
 #定义编译Base目录变量
 BASE := Base
@@ -47,6 +41,9 @@ TEST_BUILD_PATH := $(BUILD_PATH)/$(TEST)
 #定义Socket目录
 SOCKET_BUILD_PATH := $(BUILD_PATH)/Socket
 SOCKETTEST_BUILD_PATH := $(BUILD_PATH)/SocketTest
+
+#定义NetLinkTest目录
+NETLINKTEST_BUILD_PATH := $(BUILD_PATH)/NetLinkTest
 
 ################################################################################
 #定义创建FIFO目录
@@ -175,6 +172,20 @@ UDPCLIENT_TEST_BUILD_PATH := $(BUILD_PATH)/SocketTest
 ################################################################################
 
 ################################################################################
+#定义RawServer测试目录
+RAWSERVER_TEST := RawServer
+RAWSERVER_TEST_SRC := $(ROOT)/Socket
+RAWSERVER_TEST_BUILD_PATH := $(BUILD_PATH)/Socket
+################################################################################
+
+################################################################################
+#定义NetLinkTest测试目录
+NETLINK_USER_TEST := NetLinkUserTest
+NETLINK_USER_TEST_SRC := $(ROOT)/NetLinkTest
+NETLINK_USER_TEST_BUILD_PATH := $(BUILD_PATH)/NetLinkTest
+################################################################################
+
+################################################################################
 #定义内核HelloWorld模块
 HELLOWORLD_TEST := HelloWorld
 HELLOWORLD_DIR := KernelModeule/HelloWorld
@@ -224,16 +235,23 @@ LOCK_DIR := KernelModeule/Lock
 LOCK_TEST_SRC := $(ROOT)/$(LOCK_DIR)
 ################################################################################
 
+################################################################################
+#定义内核NetlinkTest模块
+NETLINK_KERNEL_TEST := NetLinkKernelTest
+NETLINK_KERNEL_DIR := KernelModeule/NetLink
+NETLINK_KERNEL_TEST_SRC := $(ROOT)/$(NETLINK_KERNEL_DIR)
+################################################################################
+
 #编译参数
 CFLAGS := -Wall -O2 -g -I $(BASE_INC) -I $(RPC_INC) -I $(COMMON_INC)
 
 ################################################################################
 all: $(MKDIR) $(BASE_LIB) $(TEST) $(CREATE_FIFO) $(READ_FIFO) $(WRITE_FIFO) $(CREATE_SHMID) \
 	$(READ_SHMID) $(WRITE_SHMID) $(SEND_MSGQ) $(RECV_MSGQ) $(SEND_SOCK) $(RECV_SOCK) \
-	$(TCPSERVER_TEST) $(TCPCLIENT_TEST) $(UDPSERVER_TEST) $(UDPCLIENT_TEST) \
+	$(TCPSERVER_TEST) $(TCPCLIENT_TEST) $(UDPSERVER_TEST) $(UDPCLIENT_TEST) $(RAWSERVER_TEST) $(NETLINK_USER_TEST) \
 	$(EPOLL_SERVER) $(EPOLL_CLIENT) $(SELECT_SERVER) $(SELECT_CLIENT) $(SIGNAL_TEST) $(TIMER_TEST) \
 	$(PTHREAD_TEST) $(CDEV_TEST) $(IOCTLTEST_TEST) $(HELLOWORLD_TEST) $(CDEV_MODULE) $(IOCTLTEST_MODULE) \
-	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(LOCK_TEST)
+	$(KTHREAD_TEST) $(NOTIFIER_TEST) $(LOCK_TEST) $(NETLINK_KERNEL_TEST)
 ################################################################################
 
 #创建文件夹
@@ -244,6 +262,7 @@ $(MKDIR):
 	$(ROOT)/$(COMMON_BUILD_PATH)		\
 	$(ROOT)/$(SOCKET_BUILD_PATH)		\
 	$(ROOT)/$(SOCKETTEST_BUILD_PATH)	\
+	$(ROOT)/$(NETLINKTEST_BUILD_PATH)	\
 	$(ROOT)/$(TEST_BUILD_PATH)			\
 	$(ROOT)/$(CDEV_TEST_BUILD_PATH)
 
@@ -497,6 +516,28 @@ $(UDPCLIENT_TEST)_objs:
 	$(CC) $(CFLAGS) -c $(UDPCLIENT_TEST_SRC)/UdpClient.c -o $(UDPCLIENT_TEST_BUILD_PATH)/UdpClient.o
 ################################################################################
 
+#测试RawServer
+################################################################################
+#链接RawServer
+$(RAWSERVER_TEST):	$(RAWSERVER_TEST)_objs
+	$(CC) $(CFLAGS) -o $(RAWSERVER_TEST_BUILD_PATH)/$(RAWSERVER_TEST) $(RAWSERVER_TEST_BUILD_PATH)/RawServer.o
+
+#编译RawServer
+$(RAWSERVER_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(RAWSERVER_TEST_SRC)/RawServer.c -o $(RAWSERVER_TEST_BUILD_PATH)/RawServer.o
+################################################################################
+
+#测试NetLinkUserTest
+################################################################################
+#链接NetLinkUserTest
+$(NETLINK_USER_TEST):	$(NETLINK_USER_TEST)_objs
+	$(CC) $(CFLAGS) -o $(NETLINK_USER_TEST_BUILD_PATH)/$(NETLINK_USER_TEST) $(NETLINK_USER_TEST_BUILD_PATH)/NetLinkTest.o
+
+#编译NetLinkUserTest
+$(NETLINK_USER_TEST)_objs:
+	$(CC) $(CFLAGS) -c $(NETLINK_USER_TEST_SRC)/NetLinkTest.c -o $(NETLINK_USER_TEST_BUILD_PATH)/NetLinkTest.o
+################################################################################
+
 ################################################################################
 #链接CdevTest
 $(CDEV_TEST):	$(CDEV_TEST)_objs
@@ -548,13 +589,21 @@ $(NOTIFIER_TEST):
 ################################################################################
 
 ################################################################################
-#编译内核AtomicTest模块
+#编译内核LockTest模块
 $(LOCK_TEST):
 	make -C $(LOCK_TEST_SRC)
 ################################################################################
 
+################################################################################
+#编译内核NetLinkTest模块
+$(NETLINK_KERNEL_TEST):
+	make -C $(NETLINK_KERNEL_TEST_SRC)
+################################################################################
+
 #清除编译内容
 clean:
+	#echo前加上@能在Makefile中执行并回显，不加@能执行但不回显
+	@echo "clean......"
 	$(RM) $(BUILD_PATH)
 	#清空HelloWorld内核模块
 	make -C $(HELLOWORLD_TEST_SRC) clean
@@ -568,4 +617,6 @@ clean:
 	make -C $(NOTIFIER_TEST_SRC) clean
 	#清空LockTest内核模块
 	make -C $(LOCK_TEST_SRC) clean
+	#清空NetLinkTest内核模块
+	make -C $(NETLINK_KERNEL_TEST_SRC) clean
 
